@@ -14,6 +14,9 @@ Players must map analog clock hands to their digital representation.
 - **Mode 3 (Interactive):** The user can rotate the clock hands with their finger ("Rotational Input"). As the hands rotate, the digital display updates in real-time.
 - **BCD Integration:** In Mode 3, the HH:MM digital display is simultaneously represented in **BCD (Binary Coded Decimal)** format, teaching kids both traditional and binary-like logic.
 - **Sistema di distrazione (Distraction System):** Le opzioni errate devono essere simili all'orario corretto (es. errore sulle ore o minuti vicini) per evitare che il giocatore vada "a usta" (to prevent guessing).
+- **Visual Aid (Clock Ticks & Hands):** To help children understand the fractional positioning of the short hour hand (**asticella**), the analog clock face must feature:
+  * **12 bumps (hour ticks)** around the dial.
+  * **4 smaller "tacchettine" (markers)** placed at the quarter points (15, 30, 45, 60/0 minutes) to visualize where the hour hand should point fractionally when minutes are at quarters (e.g. at 45 minutes, the hour hand is 3/4 of the way between the current hour and the next, aligning with the quarter guides).
 
 ## 4. Difficulty Levels
 - **Easy:** Only hours and half-hours (0, 30 min).
