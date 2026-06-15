@@ -34,7 +34,7 @@
                 </button>
                 <button class="mode-btn" data-mode="3">
                     <span class="btn-icon">⚙️</span>
-                    <span class="btn-text">Interactive & BCD</span>
+                    <span class="btn-text">Interactive & Watch</span>
                 </button>
             </nav>
 
@@ -125,9 +125,9 @@
                     </div>
                 </div>
 
-                <!-- Mode 3: Interactive Clock & BCD screen -->
+                <!-- Mode 3: Interactive Clock & Digital Watch screen -->
                 <div class="game-screen" id="screen-mode-3">
-                    <h2 class="question-title">Drag the hands to explore time & BCD!</h2>
+                    <h2 class="question-title">Drag the hands to explore time & watch digits!</h2>
                     
                     <div class="interactive-split-layout">
                         <!-- Clock section -->
@@ -145,67 +145,128 @@
                             </div>
                         </div>
 
-                        <!-- BCD Section -->
-                        <div class="bcd-section">
-                            <div class="bcd-header">
-                                <span class="bcd-title">Binary Coded Decimal (BCD)</span>
-                                <span class="bcd-subtitle">HH:MM binary visualization</span>
+                        <!-- 7-Segment Digital Watch Section -->
+                        <div class="digital-watch-section">
+                            <div class="watch-header-row">
+                                <div class="watch-header">
+                                    <span class="watch-title">Digital Watch Visualization</span>
+                                    <span class="watch-subtitle">7-Segment display construction</span>
+                                </div>
+                                <button id="safe-mode-toggle" class="safe-btn">
+                                    <span class="safe-icon">🔒</span> Safe Mode
+                                </button>
                             </div>
                             
-                            <div class="bcd-panel-container">
-                                <!-- BCD Weight Labels (Row labels) -->
-                                <div class="bcd-weights">
-                                    <div class="weight-label">8 <span class="weight-pow">2³</span></div>
-                                    <div class="weight-label">4 <span class="weight-pow">2²</span></div>
-                                    <div class="weight-label">2 <span class="weight-pow">2¹</span></div>
-                                    <div class="weight-label">1 <span class="weight-pow">2º</span></div>
+                            <!-- Safe Target Code indicator (hidden by default, shown when Safe Mode is active) -->
+                            <div id="safe-game-panel" class="safe-game-panel hidden">
+                                <div class="safe-instructions">
+                                    Safe Lock Combination:
                                 </div>
-                                
-                                <div class="bcd-grid">
-                                    <!-- Hour Column -->
-                                    <div class="bcd-column" id="bcd-col-hour">
-                                        <div class="column-name">Hour</div>
-                                        <div class="led-dots">
-                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
-                                        </div>
-                                        <div class="col-decimal-val" id="bcd-val-hour">12</div>
-                                        <div class="col-math-formula" id="bcd-math-hour">8 + 4 = 12</div>
+                                <div class="safe-combination-steps">
+                                    <div class="safe-step-indicator" id="indicator-step-0">
+                                        <span class="step-arrow">➡️</span>
+                                        <span class="step-target" id="target-step-0">20</span>
                                     </div>
-
-                                    <!-- Minute Tens Column -->
-                                    <div class="bcd-column" id="bcd-col-mint">
-                                        <div class="column-name">Min Tens</div>
-                                        <div class="led-dots">
-                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
-                                        </div>
-                                        <div class="col-decimal-val" id="bcd-val-mint">0</div>
-                                        <div class="col-math-formula" id="bcd-math-mint">0</div>
+                                    <div class="safe-step-indicator" id="indicator-step-1">
+                                        <span class="step-arrow">⬅️</span>
+                                        <span class="step-target" id="target-step-1">40</span>
                                     </div>
+                                    <div class="safe-step-indicator" id="indicator-step-2">
+                                        <span class="step-arrow">➡️</span>
+                                        <span class="step-target" id="target-step-2">10</span>
+                                    </div>
+                                </div>
+                                <div class="safe-status-row">
+                                    <span class="safe-status-badge" id="safe-status">LOCKED 🔒</span>
+                                </div>
+                                <!-- Treasure Reveal Area -->
+                                <div id="safe-treasure-box" class="safe-treasure-box hidden">
+                                    <div class="treasure-msg">✨ YOU UNLOCKED THE SAFE! ✨</div>
+                                    <img src="treasure.jpg" alt="Treasure Chest" class="treasure-img" />
+                                    <button id="btn-next-safe" class="safe-btn active">Play Again! 🔄</button>
+                                </div>
+                            </div>
 
-                                    <!-- Minute Units Column -->
-                                    <div class="bcd-column" id="bcd-col-minu">
-                                        <div class="column-name">Min Units</div>
-                                        <div class="led-dots">
-                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
-                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
+                            <div class="watch-panel-container">
+                                <div class="segment-display-container">
+                                    <!-- Digit 1 (Hour Tens) -->
+                                    <div class="segment-digit-wrapper" id="col-digit-h1">
+                                        <div class="digit-title">Hour Tens</div>
+                                        <div class="segment-digit" id="digit-h1">
+                                            <svg viewBox="0 0 100 160" class="svg-digit">
+                                                <polygon class="segment segment-a" points="15 5, 85 5, 75 15, 25 15" data-segment="a" />
+                                                <polygon class="segment segment-f" points="10 10, 20 20, 20 70, 10 80" data-segment="f" />
+                                                <polygon class="segment segment-b" points="80 10, 90 20, 90 70, 80 80" data-segment="b" />
+                                                <polygon class="segment segment-g" points="15 75, 25 65, 75 65, 85 75, 75 85, 25 85" data-segment="g" />
+                                                <polygon class="segment segment-e" points="10 70, 20 80, 20 130, 10 140" data-segment="e" />
+                                                <polygon class="segment segment-c" points="80 70, 90 80, 90 130, 80 140" data-segment="c" />
+                                                <polygon class="segment segment-d" points="15 145, 85 145, 75 135, 25 135" data-segment="d" />
+                                            </svg>
                                         </div>
-                                        <div class="col-decimal-val" id="bcd-val-minu">0</div>
-                                        <div class="col-math-formula" id="bcd-math-minu">0</div>
+                                        <div class="digit-value" id="val-digit-h1">1</div>
+                                    </div>
+                                    
+                                    <!-- Digit 2 (Hour Units) -->
+                                    <div class="segment-digit-wrapper" id="col-digit-h2">
+                                        <div class="digit-title">Hour Units</div>
+                                        <div class="segment-digit" id="digit-h2">
+                                            <svg viewBox="0 0 100 160" class="svg-digit">
+                                                <polygon class="segment segment-a" points="15 5, 85 5, 75 15, 25 15" data-segment="a" />
+                                                <polygon class="segment segment-f" points="10 10, 20 20, 20 70, 10 80" data-segment="f" />
+                                                <polygon class="segment segment-b" points="80 10, 90 20, 90 70, 80 80" data-segment="b" />
+                                                <polygon class="segment segment-g" points="15 75, 25 65, 75 65, 85 75, 75 85, 25 85" data-segment="g" />
+                                                <polygon class="segment segment-e" points="10 70, 20 80, 20 130, 10 140" data-segment="e" />
+                                                <polygon class="segment segment-c" points="80 70, 90 80, 90 130, 80 140" data-segment="c" />
+                                                <polygon class="segment segment-d" points="15 145, 85 145, 75 135, 25 135" data-segment="d" />
+                                            </svg>
+                                        </div>
+                                        <div class="digit-value" id="val-digit-h2">2</div>
+                                    </div>
+                                    
+                                    <!-- Blinking Colon -->
+                                    <div class="watch-colon">
+                                        <div class="colon-dot"></div>
+                                        <div class="colon-dot"></div>
+                                    </div>
+                                    
+                                    <!-- Digit 3 (Minute Tens) -->
+                                    <div class="segment-digit-wrapper" id="col-digit-m1">
+                                        <div class="digit-title">Min Tens</div>
+                                        <div class="segment-digit" id="digit-m1">
+                                            <svg viewBox="0 0 100 160" class="svg-digit">
+                                                <polygon class="segment segment-a" points="15 5, 85 5, 75 15, 25 15" data-segment="a" />
+                                                <polygon class="segment segment-f" points="10 10, 20 20, 20 70, 10 80" data-segment="f" />
+                                                <polygon class="segment segment-b" points="80 10, 90 20, 90 70, 80 80" data-segment="b" />
+                                                <polygon class="segment segment-g" points="15 75, 25 65, 75 65, 85 75, 75 85, 25 85" data-segment="g" />
+                                                <polygon class="segment segment-e" points="10 70, 20 80, 20 130, 10 140" data-segment="e" />
+                                                <polygon class="segment segment-c" points="80 70, 90 80, 90 130, 80 140" data-segment="c" />
+                                                <polygon class="segment segment-d" points="15 145, 85 145, 75 135, 25 135" data-segment="d" />
+                                            </svg>
+                                        </div>
+                                        <div class="digit-value" id="val-digit-m1">0</div>
+                                    </div>
+                                    
+                                    <!-- Digit 4 (Minute Units) -->
+                                    <div class="segment-digit-wrapper" id="col-digit-m2">
+                                        <div class="digit-title">Min Units</div>
+                                        <div class="segment-digit" id="digit-m2">
+                                            <svg viewBox="0 0 100 160" class="svg-digit">
+                                                <polygon class="segment segment-a" points="15 5, 85 5, 75 15, 25 15" data-segment="a" />
+                                                <polygon class="segment segment-f" points="10 10, 20 20, 20 70, 10 80" data-segment="f" />
+                                                <polygon class="segment segment-b" points="80 10, 90 20, 90 70, 80 80" data-segment="b" />
+                                                <polygon class="segment segment-g" points="15 75, 25 65, 75 65, 85 75, 75 85, 25 85" data-segment="g" />
+                                                <polygon class="segment segment-e" points="10 70, 20 80, 20 130, 10 140" data-segment="e" />
+                                                <polygon class="segment segment-c" points="80 70, 90 80, 90 130, 80 140" data-segment="c" />
+                                                <polygon class="segment segment-d" points="15 145, 85 145, 75 135, 25 135" data-segment="d" />
+                                            </svg>
+                                        </div>
+                                        <div class="digit-value" id="val-digit-m2">0</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bcd-explanation-card">
-                                <strong>How BCD works:</strong> Each digit of the time is coded separately in binary! 
-                                Active glowing lights represent binary "1" and inactive represent "0". Add up the values of the glowing lights in each column to get the decimal digit!
+                            <div class="watch-explanation-card">
+                                <strong>How the digital watch works:</strong> Inside a digital watch, digits 0-9 are shown using 7 glowing lights called <strong>segments</strong>! Rotate the clock hands and notice how different segments turn on and off to form each number.
                             </div>
                         </div>
                     </div>

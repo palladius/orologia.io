@@ -835,27 +835,35 @@ body {
     fill: rgba(74, 144, 226, 0.1);
 }
 
-/* BCD Styles */
-.bcd-section {
+/* Digital Watch & 7-Segment Styles */
+:root {
+    --segment-off-fill: rgba(61, 59, 60, 0.06);
+}
+
+[data-theme="dark"] {
+    --segment-off-fill: rgba(241, 245, 249, 0.06);
+}
+
+.digital-watch-section {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.bcd-header {
+.watch-header {
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
-.bcd-title {
+.watch-title {
     font-family: var(--font-heading);
     font-size: 18px;
     font-weight: 700;
     color: var(--primary);
 }
 
-.bcd-subtitle {
+.watch-subtitle {
     font-size: 12px;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -863,140 +871,125 @@ body {
     letter-spacing: 1px;
 }
 
-.bcd-panel-container {
+.watch-panel-container {
     background-color: var(--bg-card);
     border: 3px solid var(--border-color);
     border-radius: 20px;
     padding: 24px;
     display: flex;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
     box-shadow: var(--shadow-sm);
 }
 
-.bcd-weights {
+.segment-display-container {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 16px;
-    padding-bottom: 96px; /* Align with LED dots area height */
-}
-
-.weight-label {
-    height: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
-    font-family: var(--font-digital);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    line-height: 1;
-}
-
-.weight-pow {
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-.bcd-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    flex-grow: 1;
-}
-
-.bcd-column {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     gap: 12px;
 }
 
-.column-name {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-align: center;
-    min-height: 16px;
-}
-
-.led-dots {
+.segment-digit-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-}
-
-.led-dot {
-    width: 40px;
-    height: 40px;
-    border-radius: 50px;
-    border: 2px solid var(--led-off-border);
-    background-color: var(--led-off-bg);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    transition: all 0.2s ease-in-out;
+    gap: 8px;
 }
 
-.led-dot .bit {
-    font-family: var(--font-digital);
-    font-size: 14px;
-    color: var(--text-secondary);
-    opacity: 0.4;
+.digit-title {
+    font-size: 9px;
     font-weight: 700;
-    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
 }
 
-/* Active LED colors based on column type */
-#bcd-col-hour .led-dot.active {
-    background-color: var(--led-on-hour);
-    border-color: var(--led-on-hour);
-    box-shadow: var(--led-on-hour-glow);
+#col-digit-h1 .digit-title, #col-digit-h2 .digit-title {
+    color: var(--primary);
 }
 
-#bcd-col-mint .led-dot.active {
-    background-color: var(--led-on-mint);
-    border-color: var(--led-on-mint);
-    box-shadow: var(--led-on-mint-glow);
+#col-digit-m1 .digit-title {
+    color: var(--amber);
 }
 
-#bcd-col-minu .led-dot.active {
-    background-color: var(--led-on-minu);
-    border-color: var(--led-on-minu);
-    box-shadow: var(--led-on-minu-glow);
+#col-digit-m2 .digit-title {
+    color: var(--accent);
 }
 
-.led-dot.active .bit {
-    color: #ffffff;
-    opacity: 1;
+.segment-digit {
+    width: 50px;
+    height: 80px;
 }
 
-.col-decimal-val {
+.svg-digit {
+    width: 100%;
+    height: 100%;
+}
+
+.segment {
+    fill: var(--segment-off-fill);
+    stroke: var(--bg-card);
+    stroke-width: 1.5px;
+    transition: fill 0.15s ease, filter 0.15s ease;
+}
+
+/* Active Segment colors per digit type */
+.segment-digit-wrapper .segment.active-hour {
+    fill: var(--primary);
+    filter: drop-shadow(0 0 4px var(--primary));
+}
+
+.segment-digit-wrapper .segment.active-mint {
+    fill: var(--amber);
+    filter: drop-shadow(0 0 4px var(--amber));
+}
+
+.segment-digit-wrapper .segment.active-minu {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 4px var(--accent));
+}
+
+.digit-value {
     font-family: var(--font-digital);
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1;
-    margin-top: 4px;
-    transition: color 0.2s;
 }
 
-#bcd-col-hour .col-decimal-val { color: var(--primary); }
-#bcd-col-mint .col-decimal-val { color: var(--amber); }
-#bcd-col-minu .col-decimal-val { color: var(--accent); }
-
-.col-math-formula {
-    font-size: 11px;
-    color: var(--text-secondary);
-    font-weight: 700;
-    min-height: 14px;
-    text-align: center;
+#col-digit-h1 .digit-value, #col-digit-h2 .digit-value {
+    color: var(--primary);
 }
 
-.bcd-explanation-card {
+#col-digit-m1 .digit-value {
+    color: var(--amber);
+}
+
+#col-digit-m2 .digit-value {
+    color: var(--accent);
+}
+
+.watch-colon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 4px;
+    margin-top: 14px; /* Align visually with digits */
+}
+
+.colon-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+    animation: colon-blink 1s infinite;
+}
+
+@keyframes colon-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.watch-explanation-card {
     background-color: var(--bg-card-header);
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -1006,8 +999,232 @@ body {
     line-height: 1.5;
 }
 
-.bcd-explanation-card strong {
+.watch-explanation-card strong {
     color: var(--text-primary);
+}
+
+.watch-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.safe-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    border: 2px solid #94a3b8;
+    color: #334155;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .safe-btn {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+.safe-btn.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #047857;
+    color: white;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.safe-game-panel {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: 3px dashed var(--border-color);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+[data-theme="dark"] .safe-game-panel {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+.safe-game-panel.hidden {
+    display: none !important;
+}
+
+.safe-instructions {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.safe-combination-steps {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.safe-step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    background-color: var(--bg-card);
+    border: 3px solid var(--border-color);
+    border-radius: 16px;
+    min-width: 70px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.safe-step-indicator.current {
+    border-color: var(--amber);
+    box-shadow: 0 0 12px rgba(245, 166, 35, 0.4);
+    transform: scale(1.08);
+}
+
+.safe-step-indicator.completed {
+    border-color: var(--green-correct);
+    background-color: var(--primary-light);
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .safe-step-indicator.completed {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.step-arrow {
+    font-size: 18px;
+}
+
+.step-target {
+    font-family: var(--font-digital);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.safe-status-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.safe-status-badge {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 30px;
+    background-color: var(--accent);
+    color: white;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.safe-status-badge.unlocked {
+    background-color: var(--green-correct);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* Safe Mode Clock Face override */
+.safe-mode-active .clock-outer-bump {
+    fill: #475569;
+    stroke: #1e293b;
+}
+
+.safe-mode-active .clock-face {
+    fill: #475569;
+    stroke: #334155;
+    stroke-width: 6px;
+}
+
+.safe-mode-active .clock-rim-accent {
+    stroke: #94a3b8;
+}
+
+.safe-mode-active .clock-ticks-hour {
+    stroke: #e2e8f0;
+    stroke-width: 3px;
+}
+
+.safe-mode-active .clock-ticks-minute {
+    stroke: #94a3b8;
+}
+
+.safe-mode-active .clock-number {
+    fill: #f8fafc;
+    font-weight: 800;
+}
+
+.safe-mode-active .hour-hand {
+    stroke: #1e293b;
+    stroke-width: 12px;
+}
+
+.safe-mode-active .minute-hand {
+    stroke: #3b4252;
+    stroke-width: 7px;
+}
+
+.safe-mode-active .clock-center-cap {
+    fill: #e2e8f0;
+    stroke: #1e293b;
+    stroke-width: 3px;
+}
+
+/* Treasure Reveal styling */
+.safe-treasure-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: var(--bg-card);
+    border: 3px solid var(--green-correct);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+}
+
+@keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 0.9; transform: scale(1.1); }
+    80% { transform: scale(0.89); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.treasure-msg {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--green-correct);
+    text-align: center;
+}
+
+.treasure-img {
+    max-width: 220px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid var(--border-color);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.treasure-img:hover {
+    transform: scale(1.05) rotate(2deg);
 }
 
 /* Toast Message */

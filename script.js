@@ -15,7 +15,9 @@ const state = {
     dragState: {
         isDragging: false,
         target: null, // 'hour' or 'minute'
-    }
+    },
+    safeModeActive: false,
+    safeTargetTime: { hour: 9, minute: 30 }
 };
 
 // Initialize the Application
@@ -131,6 +133,32 @@ function playSound(type) {
             osc.start(now);
             osc.stop(now + 0.02);
 
+        } else if (type === 'safe_click') {
+            // A crisp, metallic safe wheel gear click
+            const osc1 = ctx.createOscillator();
+            const osc2 = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(1200, now);
+            osc1.frequency.exponentialRampToValueAtTime(100, now + 0.03);
+            
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(300, now);
+            osc2.frequency.exponentialRampToValueAtTime(80, now + 0.04);
+            
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+            
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 0.05);
+            osc2.stop(now + 0.05);
+
         } else if (type === 'celebrate') {
             // Magical sparkly arpeggio (C5 -> E5 -> G5 -> C6)
             const freqs = [523.25, 659.25, 783.99, 1046.50];
@@ -216,6 +244,14 @@ function setupEventListeners() {
     interactiveClock.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
+
+    // Safe Mode Toggle Button
+    const safeToggle = document.getElementById('safe-mode-toggle');
+    if (safeToggle) {
+        safeToggle.addEventListener('click', () => {
+            toggleSafeMode();
+        });
+    }
 }
 
 // Main Game Initialization
@@ -250,6 +286,11 @@ function updateHearts() {
 function changeMode(mode) {
     if (state.gameMode === mode) return;
     
+    // Turn Safe Mode off if navigating away from Mode 3
+    if (mode !== 3 && state.safeModeActive) {
+        toggleSafeMode();
+    }
+
     // Deactivate previous button and screen
     document.querySelectorAll('.mode-btn').forEach(btn => {
         if (parseInt(btn.getAttribute('data-mode'), 10) === mode) {
@@ -295,7 +336,13 @@ function changeDifficulty(diff) {
 
     state.difficulty = diff;
     state.streak = 0; // Reset streak on difficulty change
-    generateQuestion();
+    if (state.gameMode === 3) {
+        if (state.safeModeActive) {
+            generateSafeCombination();
+        }
+    } else {
+        generateQuestion();
+    }
     playSound('tick');
 }
 
@@ -712,8 +759,8 @@ function updateInteractiveDisplay() {
     const ledText = formatTime(h, m, false);
     document.getElementById('interactive-digital').textContent = ledText;
 
-    // Update BCD panels
-    updateBcdDisplay(h, m);
+    // Update 7-segment display panels
+    update7SegmentDisplay(h, m);
 }
 
 // Handle pointer dragging initiation
@@ -812,7 +859,12 @@ function handlePointerMove(e) {
 
     if (timeChanged) {
         updateInteractiveDisplay();
-        playSound('tick');
+        if (state.safeModeActive) {
+            playSound('safe_click');
+            checkSafeCombination();
+        } else {
+            playSound('tick');
+        }
     }
 }
 
@@ -826,80 +878,60 @@ function handlePointerUp(e) {
 
 
 // ----------------------------------------------------
-// BCD VISUALIZATION LOGIC
+// 7-SEGMENT DIGITAL WATCH VISUALIZATION LOGIC
 // ----------------------------------------------------
 
-// Convert value to standard BCD bits (weights 8, 4, 2, 1)
-function getBcdBits(val) {
-    // Returns array [bit8, bit4, bit2, bit1]
-    const bits = [];
-    bits.push((val & 8) !== 0);
-    bits.push((val & 4) !== 0);
-    bits.push((val & 2) !== 0);
-    bits.push((val & 1) !== 0);
-    return bits;
+// Segment mapping for digits 0-9
+const SEGMENT_MAP = {
+    0: ['a', 'b', 'c', 'd', 'e', 'f'],
+    1: ['b', 'c'],
+    2: ['a', 'b', 'd', 'e', 'g'],
+    3: ['a', 'b', 'c', 'd', 'g'],
+    4: ['b', 'c', 'f', 'g'],
+    5: ['a', 'c', 'd', 'f', 'g'],
+    6: ['a', 'c', 'd', 'e', 'f', 'g'],
+    7: ['a', 'b', 'c'],
+    8: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+    9: ['a', 'b', 'c', 'd', 'f', 'g']
+};
+
+// Update active segments for all digits
+function update7SegmentDisplay(hour, minute) {
+    // Format hour and minute as strings with leading zero (e.g. "08", "45")
+    const hStr = String(hour).padStart(2, '0');
+    const mStr = String(minute).padStart(2, '0');
+
+    // Update each digit
+    updateDigitSegments('digit-h1', parseInt(hStr[0]), 'active-hour', 'val-digit-h1');
+    updateDigitSegments('digit-h2', parseInt(hStr[1]), 'active-hour', 'val-digit-h2');
+    updateDigitSegments('digit-m1', parseInt(mStr[0]), 'active-mint', 'val-digit-m1');
+    updateDigitSegments('digit-m2', parseInt(mStr[1]), 'active-minu', 'val-digit-m2');
 }
 
-// Generate the math formulas under the BCD columns (e.g., 4 + 2 = 6)
-function getBcdMathString(bits, val) {
-    if (val === 0) return '0';
-    
-    const weights = [8, 4, 2, 1];
-    const activeWeights = [];
-    
-    bits.forEach((bit, idx) => {
-        if (bit) activeWeights.push(weights[idx]);
-    });
+// Helper to activate segments for a specific digit container
+function updateDigitSegments(digitId, value, activeClass, valueId) {
+    const digitContainer = document.getElementById(digitId);
+    if (!digitContainer) return;
 
-    if (activeWeights.length === 1) {
-        return `${activeWeights[0]}`;
-    }
+    // Get list of active segments for this digit value
+    const activeSegments = SEGMENT_MAP[value] || [];
 
-    return `${activeWeights.join(' + ')} = ${val}`;
-}
-
-// Update the glowing LED BCD grid based on the current interactive time
-function updateBcdDisplay(hour, minute) {
-    // Digit 1: Hour (1 to 12 represented as single binary column)
-    const hourVal = hour;
-    const hourBits = getBcdBits(hourVal);
-    
-    // Digit 2: Tens of minutes (0 to 5)
-    const mintVal = Math.floor(minute / 10);
-    const mintBits = getBcdBits(mintVal);
-    
-    // Digit 3: Units of minutes (0 to 9)
-    const minuVal = minute % 10;
-    const minuBits = getBcdBits(minuVal);
-
-    // Apply bits to columns in the DOM
-    applyBcdColDom('bcd-col-hour', hourBits, hourVal);
-    applyBcdColDom('bcd-col-mint', mintBits, mintVal);
-    applyBcdColDom('bcd-col-minu', minuBits, minuVal);
-}
-
-// Apply BCD active styles and updates on DOM elements
-function applyBcdColDom(colId, bits, val) {
-    const colElement = document.getElementById(colId);
-    // Find all LED circles in this column (order in HTML: weight 8, 4, 2, 1)
-    const dots = colElement.querySelectorAll('.led-dot');
-    
-    bits.forEach((isActive, idx) => {
-        const dot = dots[idx];
-        const bitSpan = dot.querySelector('.bit');
-        
-        if (isActive) {
-            dot.classList.add('active');
-            bitSpan.textContent = '1';
+    // Find all segment polygons in this digit container
+    const segments = digitContainer.querySelectorAll('.segment');
+    segments.forEach(seg => {
+        const segLetter = seg.getAttribute('data-segment');
+        if (activeSegments.includes(segLetter)) {
+            seg.classList.add(activeClass);
         } else {
-            dot.classList.remove('active');
-            bitSpan.textContent = '0';
+            seg.classList.remove(activeClass);
         }
     });
 
-    // Update bottom numeric indicators
-    colElement.querySelector('.col-decimal-val').textContent = val;
-    colElement.querySelector('.col-math-formula').textContent = getBcdMathString(bits, val);
+    // Update numerical value indicator text
+    const valIndicator = document.getElementById(valueId);
+    if (valIndicator) {
+        valIndicator.textContent = value;
+    }
 }
 
 
@@ -975,4 +1007,83 @@ function shuffleArray(array) {
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
+}
+
+
+// ----------------------------------------------------
+// SAFE LOCK GAME MODE LOGIC
+// ----------------------------------------------------
+
+function toggleSafeMode() {
+    state.safeModeActive = !state.safeModeActive;
+    
+    const safeToggle = document.getElementById('safe-mode-toggle');
+    const safePanel = document.getElementById('safe-game-panel');
+    const clockContainer = document.getElementById('interactive-clock-container');
+    
+    if (state.safeModeActive) {
+        safeToggle.classList.add('active');
+        safeToggle.innerHTML = '<span class="safe-icon">🔓</span> Safe Active';
+        safePanel.classList.remove('hidden');
+        clockContainer.classList.add('safe-mode-active');
+        generateSafeCombination();
+    } else {
+        safeToggle.classList.remove('active');
+        safeToggle.innerHTML = '<span class="safe-icon">🔒</span> Safe Mode';
+        safePanel.classList.add('hidden');
+        clockContainer.classList.remove('safe-mode-active');
+    }
+}
+
+function generateSafeCombination() {
+    // Generate target hours (1 to 12)
+    const targetHour = Math.floor(Math.random() * 12) + 1;
+    
+    // Generate target minutes depending on the current difficulty
+    let targetMin = 0;
+    if (state.difficulty === 'easy') {
+        targetMin = Math.random() < 0.5 ? 0 : 30;
+    } else if (state.difficulty === 'medium') {
+        const mins = [0, 15, 30, 45];
+        targetMin = mins[Math.floor(Math.random() * mins.length)];
+    } else {
+        // hard: any 5-minute interval to keep it playable on a drag dial
+        targetMin = Math.floor(Math.random() * 12) * 5;
+    }
+    
+    state.safeTargetTime = { hour: targetHour, minute: targetMin };
+    
+    const hStr = String(targetHour).padStart(2, '0');
+    const mStr = String(targetMin).padStart(2, '0');
+    document.getElementById('safe-target-display').textContent = `${hStr}:${mStr}`;
+    
+    const statusBadge = document.getElementById('safe-status');
+    statusBadge.textContent = 'LOCKED 🔒';
+    statusBadge.classList.remove('unlocked');
+}
+
+function checkSafeCombination() {
+    if (!state.safeModeActive) return;
+    
+    const h = state.interactiveTime.hour;
+    const m = state.interactiveTime.minute;
+    
+    if (h === state.safeTargetTime.hour && m === state.safeTargetTime.minute) {
+        const statusBadge = document.getElementById('safe-status');
+        if (!statusBadge.classList.contains('unlocked')) {
+            statusBadge.textContent = 'OPENED 🔓';
+            statusBadge.classList.add('unlocked');
+            playSound('celebrate');
+            
+            // Show toast celebration
+            showToast('You opened the safe! 🎁', 'success', '🔑');
+            
+            // Generate a new combination after a short delay
+            setTimeout(() => {
+                if (state.safeModeActive) {
+                    generateSafeCombination();
+                }
+            }, 2500);
+        }
+    }
 }
