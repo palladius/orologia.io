@@ -29,8 +29,9 @@ We have multiple implementations of Orologia.io available:
    - **Deployment**: Published to GitHub Pages (URL pending).
    - **Description**: A fully interactive, responsive clock-learning game featuring analog clock rotation, a 7-segment watch display, safe cracker combination lock, sound effects, and input diagnostics testing.
 
-2. **Flutter Mobile Prototype** (WIP):
+2. **Flutter Mobile Prototype** (Antigravity UI Solution):
    - **Path**: [solutions/antigravity2.0-multi-agent-flutter/](solutions/antigravity2.0-multi-agent-flutter/)
+   - **Description**: A more complex Flutter-based UI solution that took 30 minutes to build, implementing the mobile transition specifications.
 
 ## Documentation
 All product requirements and behavior specifications (Gherkin features) are documented in:
