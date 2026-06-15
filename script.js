@@ -17,7 +17,12 @@ const state = {
         target: null, // 'hour' or 'minute'
     },
     safeModeActive: false,
-    safeTargetTime: { hour: 9, minute: 30 }
+    safeCombination: [20, 40, 10],
+    safeDirections: ['CW', 'CCW', 'CW'],
+    safeStep: 0,
+    safeTargetReached: [false, false, false],
+    safeLastAngle: null,
+    safeOpened: false
 };
 
 // Initialize the Application
@@ -250,6 +255,14 @@ function setupEventListeners() {
     if (safeToggle) {
         safeToggle.addEventListener('click', () => {
             toggleSafeMode();
+        });
+    }
+
+    // Play Again button inside Safe Treasure Reveal Area
+    const nextSafeBtn = document.getElementById('btn-next-safe');
+    if (nextSafeBtn) {
+        nextSafeBtn.addEventListener('click', () => {
+            generateSafeCombination();
         });
     }
 }
@@ -786,12 +799,16 @@ function handlePointerDown(e) {
     // Select target hand:
     // Inner area (R <= 125) drags Hour hand
     // Outer area (125 < R <= 195) drags Minute hand
-    if (radius <= 122) {
-        state.dragState.target = 'hour';
-    } else if (radius > 122 && radius <= 195) {
+    if (state.safeModeActive) {
         state.dragState.target = 'minute';
     } else {
-        return; // Click is outside clock face
+        if (radius <= 122) {
+            state.dragState.target = 'hour';
+        } else if (radius > 122 && radius <= 195) {
+            state.dragState.target = 'minute';
+        } else {
+            return; // Click is outside clock face
+        }
     }
 
     state.dragState.isDragging = true;
@@ -817,6 +834,21 @@ function handlePointerMove(e) {
     // Angle relative to 12 o'clock position (Upwards is 0, Clockwise is positive)
     let angle = Math.atan2(dx, -dy);
     if (angle < 0) angle += 2 * Math.PI;
+
+    // Calculate rotation direction in Safe Mode
+    let direction = null;
+    if (state.safeModeActive && state.dragState.target === 'minute') {
+        if (state.safeLastAngle !== null) {
+            let diff = angle - state.safeLastAngle;
+            if (diff > Math.PI) diff -= 2 * Math.PI;
+            else if (diff < -Math.PI) diff += 2 * Math.PI;
+            
+            if (Math.abs(diff) > 0.01) {
+                direction = diff > 0 ? 'CW' : 'CCW';
+            }
+        }
+        state.safeLastAngle = angle;
+    }
 
     let timeChanged = false;
 
@@ -860,8 +892,7 @@ function handlePointerMove(e) {
     if (timeChanged) {
         updateInteractiveDisplay();
         if (state.safeModeActive) {
-            playSound('safe_click');
-            checkSafeCombination();
+            trackSafeCombination(direction);
         } else {
             playSound('tick');
         }
@@ -873,6 +904,14 @@ function handlePointerUp(e) {
     if (state.dragState.isDragging) {
         state.dragState.isDragging = false;
         state.dragState.target = null;
+        state.safeLastAngle = null;
+
+        if (state.safeModeActive && !state.safeOpened) {
+            // Final check on pointer release
+            if (state.safeStep === 2 && state.safeTargetReached[2]) {
+                unlockSafe();
+            }
+        }
     }
 }
 
@@ -1011,7 +1050,7 @@ function shuffleArray(array) {
 
 
 // ----------------------------------------------------
-// SAFE LOCK GAME MODE LOGIC
+// SAFE LOCK GAME MODE LOGIC (MOVIE COMBINATION STYLE)
 // ----------------------------------------------------
 
 function toggleSafeMode() {
@@ -1032,58 +1071,139 @@ function toggleSafeMode() {
         safeToggle.innerHTML = '<span class="safe-icon">🔒</span> Safe Mode';
         safePanel.classList.add('hidden');
         clockContainer.classList.remove('safe-mode-active');
+        
+        // Hide treasure box if lingering
+        const treasureBox = document.getElementById('safe-treasure-box');
+        if (treasureBox) treasureBox.classList.add('hidden');
     }
 }
 
 function generateSafeCombination() {
-    // Generate target hours (1 to 12)
-    const targetHour = Math.floor(Math.random() * 12) + 1;
-    
-    // Generate target minutes depending on the current difficulty
-    let targetMin = 0;
-    if (state.difficulty === 'easy') {
-        targetMin = Math.random() < 0.5 ? 0 : 30;
-    } else if (state.difficulty === 'medium') {
-        const mins = [0, 15, 30, 45];
-        targetMin = mins[Math.floor(Math.random() * mins.length)];
-    } else {
-        // hard: any 5-minute interval to keep it playable on a drag dial
-        targetMin = Math.floor(Math.random() * 12) * 5;
-    }
-    
-    state.safeTargetTime = { hour: targetHour, minute: targetMin };
-    
-    const hStr = String(targetHour).padStart(2, '0');
-    const mStr = String(targetMin).padStart(2, '0');
-    document.getElementById('safe-target-display').textContent = `${hStr}:${mStr}`;
-    
-    const statusBadge = document.getElementById('safe-status');
-    statusBadge.textContent = 'LOCKED 🔒';
-    statusBadge.classList.remove('unlocked');
-}
+    state.safeOpened = false;
+    state.safeStep = 0;
+    state.safeTargetReached = [false, false, false];
+    state.safeLastAngle = null;
 
-function checkSafeCombination() {
-    if (!state.safeModeActive) return;
-    
-    const h = state.interactiveTime.hour;
-    const m = state.interactiveTime.minute;
-    
-    if (h === state.safeTargetTime.hour && m === state.safeTargetTime.minute) {
-        const statusBadge = document.getElementById('safe-status');
-        if (!statusBadge.classList.contains('unlocked')) {
-            statusBadge.textContent = 'OPENED 🔓';
-            statusBadge.classList.add('unlocked');
-            playSound('celebrate');
-            
-            // Show toast celebration
-            showToast('You opened the safe! 🎁', 'success', '🔑');
-            
-            // Generate a new combination after a short delay
-            setTimeout(() => {
-                if (state.safeModeActive) {
-                    generateSafeCombination();
-                }
-            }, 2500);
+    // Hide treasure box
+    const treasureBox = document.getElementById('safe-treasure-box');
+    if (treasureBox) {
+        treasureBox.classList.add('hidden');
+    }
+
+    // Generate 3 target positions (minutes 0 to 59)
+    // aligned to 5-minute ticks to make it readable and child-friendly
+    const combination = [];
+    for (let i = 0; i < 3; i++) {
+        let val;
+        do {
+            val = Math.floor(Math.random() * 12) * 5;
+        } while (combination.includes(val) || (i > 0 && Math.abs(val - combination[i-1]) < 10));
+        combination.push(val);
+    }
+    state.safeCombination = combination;
+    state.safeDirections = ['CW', 'CCW', 'CW']; // Right, Left, Right
+
+    // Update UI step indicator text labels
+    for (let i = 0; i < 3; i++) {
+        const targetLabel = document.getElementById(`target-step-${i}`);
+        if (targetLabel) {
+            targetLabel.textContent = combination[i];
         }
     }
+
+    const statusBadge = document.getElementById('safe-status');
+    if (statusBadge) {
+        statusBadge.textContent = 'LOCKED 🔒';
+        statusBadge.classList.remove('unlocked');
+    }
+
+    updateSafeUIIndicators(false);
+}
+
+function trackSafeCombination(direction) {
+    if (state.safeOpened) return;
+
+    const currentMin = state.interactiveTime.minute;
+    const currentStep = state.safeStep;
+    const targetMin = state.safeCombination[currentStep];
+    const expectedDir = state.safeDirections[currentStep];
+
+    // Check distance with modular arithmetic (wrapping around 60 mins)
+    // Accepting ±3 minutes error margin (~5% error of 60 positions)
+    const diff = Math.abs(currentMin - targetMin);
+    const distance = Math.min(diff, 60 - diff);
+    const onTarget = distance <= 3;
+
+    updateSafeUIIndicators(onTarget);
+
+    if (onTarget) {
+        // "with no sound when its correct" -> suppress safe clicking sound when inside target range!
+        state.safeTargetReached[currentStep] = true;
+    } else {
+        playSound('safe_click');
+    }
+
+    if (direction !== null && direction !== expectedDir) {
+        // Rotation reversal detected
+        if (state.safeTargetReached[currentStep]) {
+            // Reached target and reversed -> Lock in the step!
+            if (currentStep < 2) {
+                state.safeStep++;
+                playSound('tick'); // Distinct mechanical thud click
+                updateSafeUIIndicators(false);
+                showToast(`Step ${currentStep + 1} locked in! 🔓`, 'success', '🔑');
+            } else {
+                unlockSafe();
+            }
+        } else if (state.safeStep > 0 || state.safeTargetReached[0]) {
+            // Resets sequence only if they had made active progress
+            resetSafeCombinationProgress();
+            playSound('incorrect');
+            showToast('Combination reset! Start over.', 'fail', '🔒');
+        }
+    }
+}
+
+function resetSafeCombinationProgress() {
+    state.safeStep = 0;
+    state.safeTargetReached = [false, false, false];
+    updateSafeUIIndicators(false);
+}
+
+function updateSafeUIIndicators(onTarget) {
+    for (let i = 0; i < 3; i++) {
+        const indicator = document.getElementById(`indicator-step-${i}`);
+        if (!indicator) continue;
+
+        indicator.className = 'safe-step-indicator';
+        if (i < state.safeStep) {
+            indicator.classList.add('completed');
+        } else if (i === state.safeStep) {
+            indicator.classList.add('current');
+            if (onTarget) {
+                indicator.style.borderColor = 'var(--green-correct)';
+            } else {
+                indicator.style.borderColor = '';
+            }
+        }
+    }
+}
+
+function unlockSafe() {
+    state.safeOpened = true;
+    playSound('celebrate');
+    
+    const statusBadge = document.getElementById('safe-status');
+    if (statusBadge) {
+        statusBadge.textContent = 'OPENED 🔓';
+        statusBadge.classList.add('unlocked');
+    }
+
+    // Reveal treasure box
+    const treasureBox = document.getElementById('safe-treasure-box');
+    if (treasureBox) {
+        treasureBox.classList.remove('hidden');
+    }
+
+    showToast('Cassaforte unlocked! 🎁', 'success', '👑');
 }
