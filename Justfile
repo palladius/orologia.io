@@ -1,3 +1,7 @@
+export JAVA_HOME := "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+export ANDROID_HOME := "/opt/homebrew/share/android-commandlinetools"
+export PATH := "/opt/homebrew/opt/openjdk@21/bin:/opt/homebrew/share/android-commandlinetools/cmdline-tools/latest/bin:/opt/homebrew/share/android-commandlinetools/platform-tools:" + env_var("PATH")
+
 # List all available commands
 default:
     @just --list
