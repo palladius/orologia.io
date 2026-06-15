@@ -22,12 +22,12 @@ Players must map analog clock hands to their digital representation.
 
 ## 4. Difficulty Levels
 - **Easy:** Only hours and half-hours (0, 30 min).
-- **Medium:** Quarters (0, 15, 30, 45 min).
+- **Medium:** Quarters and multiples of 10 (0, 10, 15, 20, 30, 40, 45, 50 min).
 - **Hard:** Any minute (e.g., 43 min).
 
 ## 5. Technical Stack
 - **Framework:** **Flutter** (Dart) for cross-platform support and responsive UI.
-- **AI Integration:** AI-generated logic for game mechanics and procedural level generation.
+- **AI Integration:** (optional) AI-generated logic for game mechanics and procedural level generation.
 
 ---
 
@@ -116,13 +116,60 @@ Players must map analog clock hands to their digital representation.
     Given the player starts a new game on 'Easy' level
     Then the game engine only generates levels with clock times ending in ":00" or ":30"
 
-  Scenario: Medium mode restricted to quarters
+  Scenario: Medium mode restricted to quarters and multiples of 10
     Given the player starts a new game on 'Medium' level
-    Then the game engine only generates levels with clock times ending in ":00", ":15", ":30", or ":45"
+    Then the game engine only generates levels with clock times ending in ":00", ":10", ":15", ":20", ":30", ":40", ":45", or ":50"
 
   Scenario: Hard mode allows any minute
     Given the player starts a new game on 'Hard' level
     Then the game engine generates levels with clock times containing any minute from "00" to "59"
+
+---
+
+### Feature 5: Multi-Device Input Controls, Responsiveness, and Explicit Diagnostics Testing
+*As a player, I want to use my preferred input device (Keyboard, Mouse, or Fingers/Touch) on both Desktop and Mobile devices, and have a visual way to explicitly verify that each device type is correctly detected and working.*
+
+  Scenario: Layout responsiveness across Desktop and Mobile screen viewports
+    Given the player is viewing the application UI
+    When the screen width is greater than 900 pixels (Desktop)
+    Then the app shows a two-column grid layout with the main clock panel on the left and the guide sidebar on the right
+    When the screen width is 900 pixels or less (Mobile/Tablet)
+    Then the app wraps into a single-column layout
+    And all headers, stat bars, and option grids scale down dynamically
+    And the watch 7-segment digits shrink and reduce gap spacing if the viewport width drops below 400 pixels to prevent layout overflow
+
+  Scenario: Touch screen dragging behavior on mobile devices
+    Given the player is on a mobile device and in 'Rotational Mode'
+    When the player drags the clock hands with their finger
+    Then the screen does not scroll or pan (touch-action is disabled on dragging)
+    And the hands follow the finger smoothly and update the time continuously
+
+  Scenario: Keyboard navigation controls in Rotational and Quiz modes
+    Given the player is using a keyboard
+    When the player is in 'Rotational Mode' (Mode 3)
+    And presses the 'ArrowRight' key
+    Then the minute hand rotates clockwise by 1 minute
+    When the player presses the 'ArrowLeft' key
+    Then the minute hand rotates counter-clockwise by 1 minute
+    When the player presses the 'ArrowUp' key and 'Safe Mode' is inactive
+    Then the hour hand rotates clockwise by 1 hour
+    When the player presses the 'ArrowDown' key and 'Safe Mode' is inactive
+    Then the hour hand rotates counter-clockwise by 1 hour
+    When the player is in 'Analog to Digital' (Mode 1) or 'Digital to Analog' (Mode 2)
+    And presses any number key '1', '2', '3', or '4'
+    Then the corresponding multiple-choice option button is selected as their answer
+
+  Scenario: Explicit diagnostics testing panel (Input Device Tests)
+    Given the player opens the help sidebar
+    Then a card titled 'Input Device Tests' is displayed
+    And it lists three test status items: 'Keyboard', 'Mouse', and 'Touch'
+    And all three status items are initialized with a red cross "❌" icon and "Not Tested" text
+    When the player presses any key on their keyboard
+    Then the Keyboard status item instantly updates to a green check "✅" icon and "Keyboard OK!" text
+    When the player clicks the mouse anywhere on the application window
+    Then the Mouse status item instantly updates to a green check "✅" icon and "Mouse OK!" text
+    When the player touches the screen or drags a hand with their finger
+    Then the Touch status item instantly updates to a green check "✅" icon and "Touch OK!" text
 
 ---
 *Note: Next step: feed this BDD to an AI agent to generate the Flutter prototype.*
