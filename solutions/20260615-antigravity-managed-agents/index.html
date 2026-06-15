@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orologia.io - Time Master</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <span class="logo-icon">🕰️</span>
+                <div class="logo-text">
+                    <h1>Orologia.io</h1>
+                    <span class="tagline">Time Master Game</span>
+                </div>
+            </div>
+            
+            <!-- Mode Selector -->
+            <nav class="mode-selector">
+                <button class="mode-btn active" data-mode="1">
+                    <span class="btn-icon">👁️</span>
+                    <span class="btn-text">Analog ➔ Digital</span>
+                </button>
+                <button class="mode-btn" data-mode="2">
+                    <span class="btn-icon">🧩</span>
+                    <span class="btn-text">Digital ➔ Analog</span>
+                </button>
+                <button class="mode-btn" data-mode="3">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-text">Interactive & BCD</span>
+                </button>
+            </nav>
+
+            <!-- Theme & Sound controls -->
+            <div class="header-controls">
+                <button id="sound-toggle" class="control-btn" title="Toggle Sound">
+                    <span id="sound-icon">🔊</span>
+                </button>
+                <button id="theme-toggle" class="control-btn" title="Toggle Light/Dark Theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="stats-bar">
+            <div class="difficulty-control">
+                <span class="control-label">Difficulty:</span>
+                <div class="diff-options">
+                    <button class="diff-btn active" data-diff="easy">
+                        <span class="diff-name">Sebi</span>
+                        <span class="diff-desc">Easy</span>
+                    </button>
+                    <button class="diff-btn" data-diff="medium">
+                        <span class="diff-name">Ale</span>
+                        <span class="diff-desc">Medium</span>
+                    </button>
+                    <button class="diff-btn" data-diff="hard">
+                        <span class="diff-name">Master</span>
+                        <span class="diff-desc">Hard</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-counters">
+                <div class="stat-badge score-badge">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-label">Score</span>
+                    <span class="stat-value" id="current-score">0</span>
+                </div>
+                <div class="stat-badge high-score-badge">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-label">High</span>
+                    <span class="stat-value" id="high-score">0</span>
+                </div>
+                <div class="stat-badge lives-badge">
+                    <span class="stat-icon">❤️</span>
+                    <span class="stat-label">Lives</span>
+                    <div class="hearts-container" id="hearts-container">
+                        <span class="heart active">❤️</span>
+                        <span class="heart active">❤️</span>
+                        <span class="heart active">❤️</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Body -->
+        <main class="main-content">
+            <!-- Left Side: Main Interactive Workspace (Clock display) -->
+            <section class="workspace-panel">
+                <!-- Mode 1: Analog to Digital Screen -->
+                <div class="game-screen active" id="screen-mode-1">
+                    <h2 class="question-title">What time is shown on the clock?</h2>
+                    
+                    <div class="clock-display-wrapper">
+                        <!-- Main SVG Clock will be rendered here -->
+                        <div id="main-clock-container" class="clock-container"></div>
+                    </div>
+
+                    <div class="options-container" id="mode1-options">
+                        <!-- 4 choices generated in script.js -->
+                    </div>
+                </div>
+
+                <!-- Mode 2: Digital to Analog Screen -->
+                <div class="game-screen" id="screen-mode-2">
+                    <h2 class="question-title">Tap the clock showing this digital time:</h2>
+                    
+                    <div class="digital-target-wrapper">
+                        <div class="digital-clock-led glow-orange" id="mode2-target-digital">
+                            10:30
+                        </div>
+                    </div>
+
+                    <div class="clock-options-grid" id="mode2-options">
+                        <!-- 4 small clock options will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Mode 3: Interactive Clock & BCD screen -->
+                <div class="game-screen" id="screen-mode-3">
+                    <h2 class="question-title">Drag the hands to explore time & BCD!</h2>
+                    
+                    <div class="interactive-split-layout">
+                        <!-- Clock section -->
+                        <div class="interactive-clock-section">
+                            <div class="clock-display-wrapper draggable-clock">
+                                <div id="interactive-clock-container" class="clock-container"></div>
+                            </div>
+                            <div class="drag-hint">
+                                <span class="drag-icon">👆</span> Drag the <strong>Blue</strong> Hour hand or <strong>Pink</strong> Minute hand!
+                            </div>
+                            
+                            <!-- Large Digital Clock Display in Interactive Mode -->
+                            <div class="digital-clock-led glow-blue" id="interactive-digital">
+                                12:00
+                            </div>
+                        </div>
+
+                        <!-- BCD Section -->
+                        <div class="bcd-section">
+                            <div class="bcd-header">
+                                <span class="bcd-title">Binary Coded Decimal (BCD)</span>
+                                <span class="bcd-subtitle">HH:MM binary visualization</span>
+                            </div>
+                            
+                            <div class="bcd-panel-container">
+                                <!-- BCD Weight Labels (Row labels) -->
+                                <div class="bcd-weights">
+                                    <div class="weight-label">8 <span class="weight-pow">2³</span></div>
+                                    <div class="weight-label">4 <span class="weight-pow">2²</span></div>
+                                    <div class="weight-label">2 <span class="weight-pow">2¹</span></div>
+                                    <div class="weight-label">1 <span class="weight-pow">2º</span></div>
+                                </div>
+                                
+                                <div class="bcd-grid">
+                                    <!-- Hour Column -->
+                                    <div class="bcd-column" id="bcd-col-hour">
+                                        <div class="column-name">Hour</div>
+                                        <div class="led-dots">
+                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
+                                        </div>
+                                        <div class="col-decimal-val" id="bcd-val-hour">12</div>
+                                        <div class="col-math-formula" id="bcd-math-hour">8 + 4 = 12</div>
+                                    </div>
+
+                                    <!-- Minute Tens Column -->
+                                    <div class="bcd-column" id="bcd-col-mint">
+                                        <div class="column-name">Min Tens</div>
+                                        <div class="led-dots">
+                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
+                                        </div>
+                                        <div class="col-decimal-val" id="bcd-val-mint">0</div>
+                                        <div class="col-math-formula" id="bcd-math-mint">0</div>
+                                    </div>
+
+                                    <!-- Minute Units Column -->
+                                    <div class="bcd-column" id="bcd-col-minu">
+                                        <div class="column-name">Min Units</div>
+                                        <div class="led-dots">
+                                            <div class="led-dot" data-weight="8"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="4"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="2"><span class="bit">0</span></div>
+                                            <div class="led-dot" data-weight="1"><span class="bit">0</span></div>
+                                        </div>
+                                        <div class="col-decimal-val" id="bcd-val-minu">0</div>
+                                        <div class="col-math-formula" id="bcd-math-minu">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bcd-explanation-card">
+                                <strong>How BCD works:</strong> Each digit of the time is coded separately in binary! 
+                                Active glowing lights represent binary "1" and inactive represent "0". Add up the values of the glowing lights in each column to get the decimal digit!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Educational Help & Visual Guides -->
+            <aside class="help-sidebar">
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <span class="card-icon">💡</span>
+                        <span>Time-Reading Guide</span>
+                    </h3>
+                    <div class="sidebar-content">
+                        <div class="guide-item">
+                            <strong class="guide-subtitle">The Clock Hands (Asticelle)</strong>
+                            <p>The short <strong>Blue hand</strong> shows the <strong>Hour</strong>. The long <strong>Pink hand</strong> shows the <strong>Minutes</strong>.</p>
+                        </div>
+                        
+                        <div class="guide-item">
+                            <strong class="guide-subtitle">Quarter Sub-Ticks (Guides)</strong>
+                            <p>Struggling to know where the hour hand should point? Look closely at the small dots between each hour number on our clock face:</p>
+                            <ul class="tick-guide-list">
+                                <li><span class="bullet bullet-blue">🔵</span> <strong>Blue Dot:</strong> Quarter past (:15). Hour hand is 1/4 of the way to the next hour.</li>
+                                <li><span class="bullet bullet-orange">🟡</span> <strong>Yellow Dot:</strong> Half past (:30). Hour hand is halfway to the next hour.</li>
+                                <li><span class="bullet bullet-pink">🔴</span> <strong>Pink Dot:</strong> Quarter to (:45). Hour hand is 3/4 of the way to the next hour.</li>
+                            </ul>
+                            <p class="guide-note">This helps Sebi and Ale see why the hour hand isn't pointing directly at a number when it's e.g., 4:45!</p>
+                        </div>
+
+                        <div class="guide-item">
+                            <strong class="guide-subtitle">For Alessandro (Medium/Hard)</strong>
+                            <p>Remember that PM hours convert to 24-hour time! Subtract 12 from hours greater than 12 to find the position of the short hand on the clock face.</p>
+                            <div class="formula-box">
+                                <code>15:45 ➔ 3:45 PM (Hour 3, Min 45)</code>
+                                <code>20:15 ➔ 8:15 PM (Hour 8, Min 15)</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Feedback Messages Overlay -->
+        <div class="toast-feedback" id="toast-feedback">
+            <span class="toast-icon">🎉</span>
+            <span class="toast-message">Correct! +10 Points</span>
+        </div>
+
+        <!-- Modals -->
+        <!-- Game Over Modal -->
+        <div class="modal-overlay" id="game-over-modal">
+            <div class="modal-content">
+                <span class="modal-icon">💀</span>
+                <h2>Game Over!</h2>
+                <p>No more hearts left! You did a fantastic job practicing.</p>
+                <div class="modal-stats">
+                    <div class="modal-stat">
+                        <span class="modal-stat-label">Final Score</span>
+                        <span class="modal-stat-val" id="final-score">0</span>
+                    </div>
+                    <div class="modal-stat">
+                        <span class="modal-stat-label">High Score</span>
+                        <span class="modal-stat-val" id="modal-high-score">0</span>
+                    </div>
+                </div>
+                <button class="modal-action-btn" id="btn-restart">Play Again</button>
+            </div>
+        </div>
+
+        <!-- Milestone Celebration Modal -->
+        <div class="modal-overlay" id="victory-modal">
+            <div class="modal-content celebration-content">
+                <span class="modal-icon animated">🏆</span>
+                <h2>Outstanding, Time Master!</h2>
+                <p id="victory-msg">You answered 5 questions correctly in a row!</p>
+                <div class="badge-display">
+                    <div class="badge-icon">🎖️</div>
+                    <div class="badge-title" id="badge-title">Clock Champion</div>
+                </div>
+                <button class="modal-action-btn btn-success" id="btn-continue">Keep Going</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script File -->
+    <script src="script.js"></script>
+</body>
+</html>
