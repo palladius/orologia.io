@@ -1,5 +1,7 @@
 # Short BDD: Orologia.io (Time Master)
 
+BDD v**1.3**.
+
 ## 1. Project Objective
 A mobile clock-learning game designed to teach children (Sebi and Alessandro) to read analog clocks, update digital displays, and visualize 7-segment watch digits.
 

@@ -1,6 +1,6 @@
 # PRD & BDD: Orologia.io (Codenamed: Time Master / Sebi Time Master)
 
-Note: This BDD can be found in this repo: https://github.com/palladius/orologia.io/
+Note: This Long BDD v**1.3** can be found in this repo: https://github.com/palladius/orologia.io/
 
 ## 1. Project Objective
 Create a mobile game (Android/iOS) to teach children (specifically Sebi and Alessandro) to read analog clocks.
