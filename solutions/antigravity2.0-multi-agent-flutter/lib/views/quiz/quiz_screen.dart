@@ -50,34 +50,35 @@ class QuizScreen extends StatelessWidget {
                   Expanded(
                     child: status == QuizStatus.loading || question == null
                         ? const Center(child: CircularProgressIndicator(color: Colors.cyanAccent))
-                        : SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   isAnalogToDigital ? 'What is this time?' : 'Which clock is correct?',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 22,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 8),
 
                                 if (isAnalogToDigital)
                                   Container(
-                                    height: 250,
-                                    width: 250,
-                                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                    height: 200,
+                                    width: 200,
+                                    margin: const EdgeInsets.symmetric(vertical: 4.0),
                                     child: AnalogClock(
                                       time: question.targetTime,
                                     ),
                                   )
                                 else
                                   Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 24.0),
-                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                    margin: const EdgeInsets.symmetric(vertical: 12.0),
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                                     decoration: BoxDecoration(
                                       color: Colors.black.withOpacity(0.4),
                                       borderRadius: BorderRadius.circular(16),
@@ -85,21 +86,25 @@ class QuizScreen extends StatelessWidget {
                                     ),
                                     child: SevenSegmentDisplay(
                                       time: question.targetTime,
-                                      digitWidth: 35,
-                                      digitHeight: 70,
+                                      digitWidth: 26,
+                                      digitHeight: 52,
                                     ),
                                   ),
 
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 12),
                                 _buildFeedbackText(status),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 8),
 
-                                if (isAnalogToDigital)
-                                  _buildDigitalOptions(context, question, status)
-                                else
-                                  _buildAnalogOptions(context, question, status),
+                                Flexible(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 450),
+                                    child: isAnalogToDigital
+                                        ? _buildDigitalOptions(context, question, status)
+                                        : _buildAnalogOptions(context, question, status),
+                                  ),
+                                ),
 
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 12),
 
                                 if (status == QuizStatus.answeredCorrect || status == QuizStatus.answeredIncorrect)
                                   ElevatedButton(
@@ -109,7 +114,7 @@ class QuizScreen extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.cyanAccent,
                                       foregroundColor: Colors.black,
-                                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
+                                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
@@ -117,7 +122,7 @@ class QuizScreen extends StatelessWidget {
                                     child: const Text(
                                       'Next Level ➔',
                                       style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -191,7 +196,7 @@ class QuizScreen extends StatelessWidget {
         ),
       );
     }
-    return const SizedBox(height: 24);
+    return const SizedBox(height: 8);
   }
 
   Widget _buildDigitalOptions(BuildContext context, TimeQuestion question, QuizStatus status) {
@@ -200,7 +205,7 @@ class QuizScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 2.2,
+        childAspectRatio: 2.3,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
@@ -239,7 +244,7 @@ class QuizScreen extends StatelessWidget {
                 option.toFormattedString(),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
@@ -257,9 +262,9 @@ class QuizScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.95,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 14,
+        childAspectRatio: 1.15,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
       itemCount: 4,
       itemBuilder: (context, index) {

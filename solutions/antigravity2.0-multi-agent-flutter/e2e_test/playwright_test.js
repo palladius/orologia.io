@@ -92,7 +92,7 @@ const path = require('path');
 
     // Step 5: Capture gameplay screenshot
     console.log('Capturing gameplay screenshot...');
-    const screenshotPath = '/Users/ricc/git/orologia.io/artifact/gameplay_snapshot.png';
+    const screenshotPath = '/Users/ricc/git/orologia.io/solutions/antigravity2.0-multi-agent-flutter/artifact/gameplay_snapshot.png';
     const brainScreenshotPath = '/Users/ricc/.gemini/antigravity/brain/cbb42f32-2103-4025-8a73-7132f2ed8ba9/gameplay_snapshot.png';
     
     fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
@@ -108,7 +108,7 @@ const path = require('path');
   } catch (error) {
     console.error('E2E Test failed:', error);
     try {
-      const errScreenshotPath = '/Users/ricc/git/orologia.io/artifact/gameplay_snapshot.png';
+      const errScreenshotPath = '/Users/ricc/git/orologia.io/solutions/antigravity2.0-multi-agent-flutter/artifact/gameplay_snapshot.png';
       const brainScreenshotPath = '/Users/ricc/.gemini/antigravity/brain/cbb42f32-2103-4025-8a73-7132f2ed8ba9/gameplay_snapshot.png';
       fs.mkdirSync(path.dirname(errScreenshotPath), { recursive: true });
       await page.screenshot({ path: errScreenshotPath });

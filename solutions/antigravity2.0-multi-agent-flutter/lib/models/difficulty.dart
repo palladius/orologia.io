@@ -6,11 +6,11 @@ enum Difficulty {
   String get displayName {
     switch (this) {
       case Difficulty.easy:
-        return 'Easy (Seby)';
+        return 'Easy';
       case Difficulty.medium:
-        return 'Medium (Alessandro)';
+        return 'Medium';
       case Difficulty.hard:
-        return 'Hard (Master)';
+        return 'Hard';
     }
   }
 }

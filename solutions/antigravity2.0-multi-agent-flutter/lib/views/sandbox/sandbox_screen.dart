@@ -14,6 +14,8 @@ class SandboxScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width > 650;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -36,7 +38,7 @@ class SandboxScreen extends StatelessWidget {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -58,51 +60,93 @@ class SandboxScreen extends StatelessWidget {
                   ),
 
                   Expanded(
-                    child: SingleChildScrollView(
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Drag the hands or press the buttons to learn how time works!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
+                      child: isWide
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 250,
+                                  width: 250,
+                                  child: AnalogClock(
+                                    time: currentTime,
+                                    onTimeChanged: (newTime) {
+                                      sandboxNotifier.currentTime = newTime;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 320,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.4),
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(color: Colors.white10),
+                                        ),
+                                        child: SevenSegmentDisplay(
+                                          time: currentTime,
+                                          activeColor: const Color(0xFF00FFCC),
+                                          digitWidth: 26,
+                                          digitHeight: 52,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      _buildControlPanel(context),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Drag the hands or press the buttons to learn time!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: Colors.white10),
+                                  ),
+                                  child: SevenSegmentDisplay(
+                                    time: currentTime,
+                                    activeColor: const Color(0xFF00FFCC),
+                                    digitWidth: 22,
+                                    digitHeight: 44,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  height: 190,
+                                  width: 190,
+                                  child: AnalogClock(
+                                    time: currentTime,
+                                    onTimeChanged: (newTime) {
+                                      sandboxNotifier.currentTime = newTime;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 400),
+                                  child: _buildControlPanel(context),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white10),
-                            ),
-                            child: SevenSegmentDisplay(
-                              time: currentTime,
-                              activeColor: const Color(0xFF00FFCC),
-                              digitWidth: 40,
-                              digitHeight: 80,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-
-                          SizedBox(
-                            height: 280,
-                            width: 280,
-                            child: AnalogClock(
-                              time: currentTime,
-                              onTimeChanged: (newTime) {
-                                sandboxNotifier.currentTime = newTime;
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 28),
-
-                          _buildControlPanel(context),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -116,7 +160,7 @@ class SandboxScreen extends StatelessWidget {
 
   Widget _buildControlPanel(BuildContext context) {
     return GlassCard(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       borderRadius: 20,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,11 +169,11 @@ class SandboxScreen extends StatelessWidget {
             'Adjust Time:',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
           Row(
             children: [
@@ -141,7 +185,7 @@ class SandboxScreen extends StatelessWidget {
                   onTap: () => sandboxNotifier.subtractHour(),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: _buildOffsetBtn(
                   label: '+1 Hour',
@@ -152,7 +196,7 @@ class SandboxScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
           Row(
             children: [
@@ -163,7 +207,7 @@ class SandboxScreen extends StatelessWidget {
                   onTap: () => sandboxNotifier.subtract15Minutes(),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: _buildOffsetBtn(
                   label: '+15 Min',
@@ -183,7 +227,7 @@ class SandboxScreen extends StatelessWidget {
                   onTap: () => sandboxNotifier.addMinutes(-5),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: _buildOffsetBtn(
                   label: '+5 Min',
@@ -203,7 +247,7 @@ class SandboxScreen extends StatelessWidget {
                   onTap: () => sandboxNotifier.subtract1Minute(),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: _buildOffsetBtn(
                   label: '+1 Min',
