@@ -18,7 +18,19 @@ We have built a beautiful, fully interactive, single-page web application protot
 5. **Aesthetics & Audio**: Gorgeous glassmorphism, responsive interface supporting both Light (Daylight) and Dark (Neon Space) themes, and synthesized cute Web Audio SFX (chime, buzzer, ticking, celebration) with zero external assets needed.
 
 ### How to Play
-Simply open `index.html` in any modern web browser!
+Simply open `solutions/20260615-antigravity-managed-agents/index.html` in any modern web browser!
+
+## Solutions
+
+We have multiple implementations of Orologia.io available:
+
+1. **Antigravity Managed Agents Web Solution** (Vanilla JS):
+   - **Path**: [solutions/20260615-antigravity-managed-agents/](solutions/20260615-antigravity-managed-agents/)
+   - **Deployment**: Published to GitHub Pages (URL pending).
+   - **Description**: A fully interactive, responsive clock-learning game featuring analog clock rotation, a 7-segment watch display, safe cracker combination lock, sound effects, and input diagnostics testing.
+
+2. **Flutter Mobile Prototype** (WIP):
+   - **Path**: [solutions/antigravity2.0-multi-agent-flutter/](solutions/antigravity2.0-multi-agent-flutter/)
 
 ## Documentation
 All product requirements and behavior specifications (Gherkin features) are documented in:
