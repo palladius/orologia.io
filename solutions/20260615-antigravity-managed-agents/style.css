@@ -14,21 +14,21 @@
     --text-secondary: #726e6f;
     --border-color: #e5dec9;
     
-    /* Brand Colors */
-    --primary: #4a90e2; /* Sky Blue */
-    --primary-light: #e3f2fd;
-    --accent: #ff6b6b;  /* Pink/Coral */
-    --accent-light: #ffebee;
-    --amber: #f5a623;   /* Yellow/Amber */
-    --amber-light: #fef8eb;
-    --green-correct: #2ecc71;
-    --red-incorrect: #e74c3c;
+    /* Brand Colors (Official Google Logo Colors) */
+    --primary: #4285F4;       /* Google Blue */
+    --primary-light: rgba(66, 133, 244, 0.1);
+    --accent: #EA4335;        /* Google Red */
+    --accent-light: rgba(234, 67, 53, 0.1);
+    --amber: #FBBC05;         /* Google Yellow */
+    --amber-light: rgba(251, 188, 5, 0.1);
+    --green-correct: #34A853;  /* Google Green */
+    --red-incorrect: #EA4335;  /* Google Red */
     
     /* Interactive & Shadow styles */
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --shadow-glow: 0 0 15px rgba(74, 144, 226, 0.3);
+    --shadow-glow: 0 0 15px rgba(66, 133, 244, 0.3);
     
     /* Specific components */
     --clock-face-bg: #ffffff;
@@ -36,12 +36,12 @@
     --clock-number: #3d3b3c;
     --led-off-bg: #e2e8f0;
     --led-off-border: #cbd5e1;
-    --led-on-hour: #4a90e2;
-    --led-on-mint: #f5a623;
-    --led-on-minu: #ff6b6b;
-    --led-on-hour-glow: 0 0 15px rgba(74, 144, 226, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
-    --led-on-mint-glow: 0 0 15px rgba(245, 166, 35, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
-    --led-on-minu-glow: 0 0 15px rgba(255, 107, 107, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+    --led-on-hour: #4285F4;
+    --led-on-mint: #FBBC05;
+    --led-on-minu: #EA4335;
+    --led-on-hour-glow: 0 0 15px rgba(66, 133, 244, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+    --led-on-mint-glow: 0 0 15px rgba(251, 188, 5, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+    --led-on-minu-glow: 0 0 15px rgba(234, 67, 53, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
     
     --transition-speed: 0.25s;
 }
@@ -55,31 +55,31 @@
     --text-secondary: #94a3b8;
     --border-color: #2a3b5a;
     
-    --primary: #38bdf8; /* Cyan-like Blue */
-    --primary-light: #0c4a6e;
-    --accent: #f43f5e;  /* Intense Pink */
-    --accent-light: #4c0519;
-    --amber: #fbbf24;   /* Vivid Amber */
-    --amber-light: #451a03;
-    --green-correct: #10b981;
-    --red-incorrect: #ef4444;
+    --primary: #4285F4;       /* Google Blue */
+    --primary-light: rgba(66, 133, 244, 0.15);
+    --accent: #EA4335;        /* Google Red */
+    --accent-light: rgba(234, 67, 53, 0.15);
+    --amber: #FBBC05;         /* Google Yellow */
+    --amber-light: rgba(251, 188, 5, 0.15);
+    --green-correct: #34A853;  /* Google Green */
+    --red-incorrect: #EA4335;  /* Google Red */
 
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.4);
+    --shadow-glow: 0 0 20px rgba(66, 133, 244, 0.4);
     
     --clock-face-bg: #1e293b;
     --clock-face-border: #2a3b5a;
     --clock-number: #f1f5f9;
     --led-off-bg: #1e293b;
     --led-off-border: #334155;
-    --led-on-hour: #38bdf8;
-    --led-on-mint: #fbbf24;
-    --led-on-minu: #f43f5e;
-    --led-on-hour-glow: 0 0 20px rgba(56, 189, 248, 0.9), inset 0 0 8px rgba(255, 255, 255, 0.6);
-    --led-on-mint-glow: 0 0 20px rgba(251, 191, 36, 0.9), inset 0 0 8px rgba(255, 255, 255, 0.6);
-    --led-on-minu-glow: 0 0 20px rgba(244, 63, 94, 0.9), inset 0 0 8px rgba(255, 255, 255, 0.6);
+    --led-on-hour: #4285F4;
+    --led-on-mint: #FBBC05;
+    --led-on-minu: #EA4335;
+    --led-on-hour-glow: 0 0 20px rgba(66, 133, 244, 0.9, inset 0 0 8px rgba(255, 255, 255, 0.6));
+    --led-on-mint-glow: 0 0 20px rgba(251, 188, 5, 0.9, inset 0 0 8px rgba(255, 255, 255, 0.6));
+    --led-on-minu-glow: 0 0 20px rgba(234, 67, 53, 0.9, inset 0 0 8px rgba(255, 255, 255, 0.6));
 }
 
 /* Base Styles */
@@ -147,9 +147,13 @@ body {
     font-family: var(--font-heading);
     font-size: 24px;
     font-weight: 700;
-    color: var(--primary);
     line-height: 1.1;
 }
+
+.logo-text h1 .g-blue { color: #4285F4; }
+.logo-text h1 .g-red { color: #EA4335; }
+.logo-text h1 .g-yellow { color: #FBBC05; }
+.logo-text h1 .g-green { color: #34A853; }
 
 .logo-text .tagline {
     font-size: 12px;
