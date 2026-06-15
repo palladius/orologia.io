@@ -12,7 +12,7 @@ Players must map analog clock hands to their digital representation.
 - **Mode 1:** Analog -> Digital (Select from 4 digital options).
 - **Mode 2:** Digital -> Analog (Select from 4 clock options).
 - **Mode 3 (Interactive):** The user can rotate the clock hands with their finger ("Rotational Input"). As the hands rotate, the digital display updates in real-time.
-- **BCD Integration:** In Mode 3, the HH:MM digital display is simultaneously represented in **BCD (Binary Coded Decimal)** format, teaching kids both traditional and binary-like logic.
+- **7-Segment Display Integration:** In Mode 3, the HH:MM digital display is represented using a classic **7-segment display** (like in digital watches), teaching kids how the digits 0-9 are visually constructed using active and inactive segments.
 - **Sistema di distrazione (Distraction System):** Le opzioni errate devono essere simili all'orario corretto (es. errore sulle ore o minuti vicini) per evitare che il giocatore vada "a usta" (to prevent guessing).
 - **Visual Aid (Clock Ticks & Hands):** To help children understand the fractional positioning of the short hour hand (**asticella**), the analog clock face must feature:
   * **12 bumps (hour ticks)** around the dial.
@@ -71,20 +71,33 @@ Players must map analog clock hands to their digital representation.
 
 ---
 
-### Feature 3: Mode 3 - Rotational Input and BCD Display
-*As an advanced player, I want to rotate the clock hands with my finger and see both digital and Binary Coded Decimal displays update in real-time to learn binary logic.*
+### Feature 3: Mode 3 - Rotational Input, 7-Segment Display, and Safe Lock Mode
+*As an advanced player, I want to rotate the clock hands with my finger and see the digital display update in real-time as a 7-segment layout, or toggle Safe Lock Mode to solve combination puzzles with satisfying clicking sounds.*
 
-  Scenario: Real-time update of digital and BCD display on hand rotation
+  Scenario: Real-time update of 7-segment digital display on hand rotation
     Given the player is in 'Rotational Mode'
     And the current time displayed is "12:00"
     When the player drags the minute hand with their finger to "45" minutes
     And the hour hand shifts to "07"
     Then the digital text display shows "07:45"
-    And the BCD (Binary Coded Decimal) display updates dynamically to:
-      | Column | Binary Representation | Decimal Value |
-      | Hour   | 0111                  | 7             |
-      | Min T  | 0100                  | 4             |
-      | Min U  | 0101                  | 5             |
+    And the 7-segment display segments (a-g) update dynamically for each digit:
+      | Digit | Active Segments | Description of Active Segments |
+      | '0'   | a, b, c, d, e, f| Outer loop active, middle off |
+      | '7'   | a, b, c         | Top and right segments active |
+      | '4'   | b, c, f, g      | Left-top, middle, and right segments active |
+      | '5'   | a, c, d, f, g   | Top, left-top, middle, right-bottom, bottom active |
+
+  Scenario: Safe Lock Mode (Cassaforte) - Clicking sounds and combination unlocking
+    Given the player is in 'Rotational Mode'
+    When the player toggles 'Safe Mode' on
+    Then the clock styling changes to a metallic safe lock face
+    And a target combination time (e.g., "09:30") is displayed as 'LOCKED'
+    When the player drags the clock hands back and forth
+    Then the system plays a metallic clicking sound ('click click click') at every minute/hour increment
+    When the player matches the hands to the combination "09:30"
+    Then the system registers 'OPENED 🔓'
+    And a celebration sound effect is played
+    And a positive toast message "You opened the safe! 🎁" is displayed
 
 ---
 
@@ -104,4 +117,4 @@ Players must map analog clock hands to their digital representation.
     Then the game engine generates levels with clock times containing any minute from "00" to "59"
 
 ---
-*Note: Next step: feed this PRD to an AI agent to generate the Flutter prototype.*
+*Note: Next step: feed this BDD to an AI agent to generate the Flutter prototype.*
