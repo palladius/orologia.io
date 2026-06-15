@@ -5,18 +5,20 @@ Create a mobile game (Android/iOS) to teach children (specifically Sebi and Ales
 
 ## 2. Target Users
 - **Seby (Easy):** Full hours and half-hours (0, 30 min).
-- **Alessandro (Medium/Hard):** Quarters, specific minutes, and complex conversions.
+- **Alessandro (Medium):** Quarters,
+- **Adults**: Hard. specific minutes, and complex conversions.
 
 ## 3. Gameplay Dynamics
+
 Players must map analog clock hands to their digital representation.
 - **Mode 1:** Analog -> Digital (Select from 4 digital options).
 - **Mode 2:** Digital -> Analog (Select from 4 clock options).
 - **Mode 3 (Interactive):** The user can rotate the clock hands with their finger ("Rotational Input"). As the hands rotate, the digital display updates in real-time.
 - **7-Segment Display Integration:** In Mode 3, the HH:MM digital display is represented using a classic **7-segment display** (like in digital watches), teaching kids how the digits 0-9 are visually constructed using active and inactive segments.
-- **Sistema di distrazione (Distraction System):** Le opzioni errate devono essere simili all'orario corretto (es. errore sulle ore o minuti vicini) per evitare che il giocatore vada "a usta" (to prevent guessing).
-- **Visual Aid (Clock Ticks & Hands):** To help children understand the fractional positioning of the short hour hand (**asticella**), the analog clock face must feature:
+- **Distraction System:** Incorrect options must be similar to the correct time (e.g., error on the hour or nearby minutes) to prevent the player from guessing.
+- **Visual Aid (Clock Ticks & Hands):** To help children understand the fractional positioning of the short hour hand, the analog clock face must feature:
   * **12 bumps (hour ticks)** around the dial.
-  * **4 smaller "tacchettine" (markers)** placed at the quarter points (15, 30, 45, 60/0 minutes) to visualize where the hour hand should point fractionally when minutes are at quarters (e.g. at 45 minutes, the hour hand is 3/4 of the way between the current hour and the next, aligning with the quarter guides).
+  * **4 smaller markers (quarter ticks)** placed at the quarter points (15, 30, 45, 60/0 minutes) to visualize where the hour hand should point fractionally when minutes are at quarters (e.g. at 45 minutes, the hour hand is 3/4 of the way between the current hour and the next, aligning with the quarter guides).
 
 ## 4. Difficulty Levels
 - **Easy:** Only hours and half-hours (0, 30 min).
@@ -45,7 +47,7 @@ Players must map analog clock hands to their digital representation.
     And a cheerful sound effect is played
     And a positive visual celebration is displayed on the screen
 
-  Scenario: Easy mode - Incorrect digital option selected (Simulating "A Usta" Prevention)
+  Scenario: Easy mode - Incorrect digital option selected (Simulating guessing prevention)
     Given the player is in 'Analog to Digital' game mode
     And the difficulty level is set to 'Easy'
     And the analog clock displays the hands at "03:30"
@@ -87,7 +89,7 @@ Players must map analog clock hands to their digital representation.
       | '4'   | b, c, f, g      | Left-top, middle, and right segments active |
       | '5'   | a, c, d, f, g   | Top, left-top, middle, right-bottom, bottom active |
 
-  Scenario: Safe Lock Mode (Cassaforte) - Movie combination style unlocking
+  Scenario: Safe Lock Mode (Safe) - Movie combination style unlocking
     Given the player is in 'Rotational Mode'
     When the player toggles 'Safe Mode' on
     Then the clock styling changes to a metallic safe lock face
