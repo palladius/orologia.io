@@ -21,4 +21,4 @@ upload-to-google-play track="internal":
       --aab solutions/antigravity2.0-multi-agent-flutter/build/app/outputs/bundle/release/app-release.aab \
       --package-name io.orologia.orologia_io \
       --track "{{track}}" \
-      --service-account-json /Users/ricc/git/gic/private/google-play-service-account.json
+      --service-account-json /Users/ricc/git/gic/private/google-play/google-play-service-account.json

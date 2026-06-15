@@ -8,7 +8,7 @@ def main():
     parser.add_argument("--aab", required=True, help="Path to the app-release.aab file")
     parser.add_argument("--package-name", default="io.orologia.orologia_io", help="Android package name/ID")
     parser.add_argument("--track", default="internal", choices=["internal", "alpha", "beta", "production"], help="Release track")
-    parser.add_argument("--service-account-json", default="/Users/ricc/git/gic/private/google-play-service-account.json", help="Path to Google Play Service Account JSON key")
+    parser.add_argument("--service-account-json", default="/Users/ricc/git/gic/private/google-play/google-play-service-account.json", help="Path to Google Play Service Account JSON key")
     
     args = parser.parse_args()
     
