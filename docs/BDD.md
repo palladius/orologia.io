@@ -87,17 +87,23 @@ Players must map analog clock hands to their digital representation.
       | '4'   | b, c, f, g      | Left-top, middle, and right segments active |
       | '5'   | a, c, d, f, g   | Top, left-top, middle, right-bottom, bottom active |
 
-  Scenario: Safe Lock Mode (Cassaforte) - Clicking sounds and combination unlocking
+  Scenario: Safe Lock Mode (Cassaforte) - Movie combination style unlocking
     Given the player is in 'Rotational Mode'
     When the player toggles 'Safe Mode' on
     Then the clock styling changes to a metallic safe lock face
-    And a target combination time (e.g., "09:30") is displayed as 'LOCKED'
-    When the player drags the clock hands back and forth
-    Then the system plays a metallic clicking sound ('click click click') at every minute/hour increment
-    When the player matches the hands to the combination "09:30"
-    Then the system registers 'OPENED 🔓'
+    And the safe combination displays three target ticks (e.g. Right to 20, Left to 40, Right to 10)
+    And the safe status starts as 'LOCKED 🔒'
+    When the player rotates the dial (minute hand) in the expected direction (CW / CCW)
+    Then the system plays a metallic clicking sound ('safe_click') at each tick
+    And the click sound is completely silenced ("no sound when its correct") when the dial is within the ±3 minutes (5%) error margin of the current target
+    When the player changes direction or releases the dial inside the correct target range
+    Then the step is registered as completed in the UI combination steps
+    When the player makes an incorrect turn or overshoots and reverses direction outside the target range
+    Then the combination progress resets to step 0 and locks again
+    When the player completes all three steps in sequence (Right ➔ Left ➔ Right)
+    Then the safe opens and status changes to 'OPENED 🔓'
     And a celebration sound effect is played
-    And a positive toast message "You opened the safe! 🎁" is displayed
+    And a glorious treasure chest illustration is displayed on screen
 
 ---
 
