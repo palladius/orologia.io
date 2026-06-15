@@ -1,0 +1,11 @@
+# Root gitignore
+.dart_tool/
+.idea/
+.DS_Store
+build/
+node_modules/
+
+# Private signing secrets
+**/key.properties
+**/*.jks
+**/*.keystore
