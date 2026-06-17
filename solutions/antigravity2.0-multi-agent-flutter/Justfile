@@ -1,0 +1,45 @@
+# macOS-only env vars (Homebrew paths)
+export JAVA_HOME := env_var_or_default("JAVA_HOME", "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home")
+export ANDROID_HOME := env_var_or_default("ANDROID_HOME", "/opt/homebrew/share/android-commandlinetools")
+
+# List all available commands
+default:
+    @just --list
+
+# Run the Flutter dev server with hot reload (default port 8080)
+run port="8080":
+    flutter run -d web-server --web-port={{port}} --web-hostname=0.0.0.0
+
+# Serve the pre-built web app — fast, no debug overhead (default port 8080)
+run-linux-fast port="8080":
+    @echo "Serving build/web on http://localhost:{{port}} ..."
+    python3 -m http.server {{port}} --directory build/web --bind 0.0.0.0
+
+# Run unit and widget tests
+test:
+    flutter test
+
+# Build the web application
+build-web:
+    flutter build web
+
+# Build the production Android App Bundle (.aab)
+build-android-aab:
+    flutter build appbundle --release
+
+# Upload the built release AAB to Google Play Store using Developer API
+upload-to-google-play track="internal": build-android-aab
+    @if python3 -c "import googleapiclient, google.auth" 2>/dev/null; then \
+      python3 ../../scripts/upload_to_play_store.py \
+        --aab build/app/outputs/bundle/release/app-release.aab \
+        --package-name io.orologia.orologia_io \
+        --track "{{track}}" \
+        --service-account-json /Users/ricc/git/gic/private/google-play/google-play-service-account.json; \
+    else \
+      uv run --with google-api-python-client --with google-auth \
+        python3 ../../scripts/upload_to_play_store.py \
+        --aab build/app/outputs/bundle/release/app-release.aab \
+        --package-name io.orologia.orologia_io \
+        --track "{{track}}" \
+        --service-account-json /Users/ricc/git/gic/private/google-play/google-play-service-account.json; \
+    fi
