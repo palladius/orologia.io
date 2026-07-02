@@ -1,5 +1,7 @@
 # Orologia.io (Codenamed: Time Master)
 
+Play the game here: https://palladius.github.io/orologia.io/
+
 ![Orologia.io Logo](logo.jpg)
 
 A mobile clock-learning game designed to teach children (Sebi and Alessandro) how to read analog clocks, update digital displays, and understand 7-segment digital watch digit configurations.
