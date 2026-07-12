@@ -43,3 +43,11 @@ upload-to-google-play track="internal": build-android-aab
         --track "{{track}}" \
         --service-account-json /Users/ricc/git/gic/private/google-play/google-play-service-account.json; \
     fi
+
+# Run the app natively as a macOS desktop application
+run-mac:
+    flutter run -d macos
+
+# Run the app in Google Chrome
+run-chrome:
+    flutter run -d chrome

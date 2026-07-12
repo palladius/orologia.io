@@ -28,3 +28,11 @@ build-android-aab:
 # Upload the built release AAB to Google Play Store
 upload-to-google-play *ARGS:
     just {{FLUTTER_DIR}}/upload-to-google-play {{ARGS}}
+
+# Run the app natively as a macOS desktop application
+run-mac:
+    just {{FLUTTER_DIR}}/run-mac
+
+# Run the app in Google Chrome
+run-chrome:
+    just {{FLUTTER_DIR}}/run-chrome
