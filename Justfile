@@ -36,3 +36,10 @@ run-mac:
 # Run the app in Google Chrome
 run-chrome:
     just {{FLUTTER_DIR}}/run-chrome
+
+# Clean up build artifacts, node_modules, and .dart_tool to save space
+clean:
+    cd {{FLUTTER_DIR}} && flutter clean || true
+    rm -rf build .dart_tool node_modules
+    rm -rf {{FLUTTER_DIR}}/node_modules
+    @echo "✅ Cleaned up bloat and regeneratable files!"
