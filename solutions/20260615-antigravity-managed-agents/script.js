@@ -190,6 +190,73 @@ function playSound(type) {
     }
 }
 
+// Multilingual Time Audio Playback
+// Plays a pre-recorded MP3 of the current time in the selected language
+let currentTimeAudio = null; // Track playing audio to avoid overlaps
+
+function playTimeAudio() {
+    if (!state.currentQuestion) return;
+
+    const q = state.currentQuestion.correctTime;
+    const hour12 = q.hour === 12 ? 12 : q.hour % 12;
+    const minute = q.minute;
+    const langBtn = document.querySelector('#global-lang-flags .flag-btn.active');
+    const variantBtn = document.querySelector('.pill-btn.active');
+    const lang = langBtn ? langBtn.dataset.lang : 'french';
+    const variant = variantBtn ? variantBtn.dataset.variant : 'frac';
+
+    const hh = String(hour12).padStart(2, '0');
+    const mm = String(minute).padStart(2, '0');
+
+    let filename;
+    if (minute === 0) {
+        filename = `${hh}_00.mp3`;
+    } else if (minute === 15 || minute === 30) {
+        // frac or num variant
+        const v = (variant === 'minus') ? 'frac' : variant; // minus only for :45
+        filename = `${hh}_${mm}_${v}.mp3`;
+    } else if (minute === 45) {
+        filename = `${hh}_${mm}_${variant}.mp3`;
+    } else {
+        // For non-quarter times, no audio file exists yet
+        showToast('Audio only for :00, :15, :30, :45', 'fail', '🔇');
+        return;
+    }
+
+    const url = `assets/audio/${lang}/${filename}`;
+
+    // Stop any currently playing audio
+    if (currentTimeAudio) {
+        currentTimeAudio.pause();
+        currentTimeAudio = null;
+    }
+
+    const audio = new Audio(url);
+    currentTimeAudio = audio;
+
+    // Visual feedback on the button
+    const btn = document.getElementById('speak-time-btn');
+    btn.classList.add('playing');
+    btn.textContent = '🔉';
+
+    audio.play().catch(err => {
+        console.warn('Audio playback failed:', err);
+        showToast('Audio not available yet', 'fail', '🔇');
+    });
+
+    audio.addEventListener('ended', () => {
+        btn.classList.remove('playing');
+        btn.textContent = '🔊';
+        currentTimeAudio = null;
+    });
+
+    audio.addEventListener('error', () => {
+        btn.classList.remove('playing');
+        btn.textContent = '🔊';
+        currentTimeAudio = null;
+    });
+}
+
 // Event Listeners Setup
 function setupEventListeners() {
     // Mode selector buttons
@@ -265,6 +332,24 @@ function setupEventListeners() {
             generateSafeCombination();
         });
     }
+
+    // 🔊 Speak Time buttons (Mode 1 & Mode 2)
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            playTimeAudio();
+        });
+    });
+
+    // 🇫🇷🇮🇹🇩🇪🇬🇧 Language flag buttons (global)
+    document.querySelectorAll('#global-lang-flags .flag-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            document.querySelectorAll('#global-lang-flags .flag-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            playSound('tick');
+        });
+    });
+
 }
 
 // Main Game Initialization
@@ -531,6 +616,9 @@ function renderMode1() {
     const container = document.getElementById('main-clock-container');
     container.innerHTML = drawClockSvg(q.correctTime.hour, q.correctTime.minute, 320, false);
 
+    // Update variant buttons for this time
+    updateVariantButtons(q.correctTime.hour, q.correctTime.minute, 'variant-pills-mode1');
+
     // Render 4 digital option buttons
     const optionsContainer = document.getElementById('mode1-options');
     optionsContainer.innerHTML = '';
@@ -553,6 +641,9 @@ function renderMode2() {
     const digitalDisplay = document.getElementById('mode2-target-digital');
     digitalDisplay.textContent = formatTime(q.correctTime.hour24, q.correctTime.minute, q.correctTime.is24h);
 
+    // Update variant buttons for this time
+    updateVariantButtons(q.correctTime.hour, q.correctTime.minute, 'variant-pills');
+
     // Render 4 mini analog clock buttons
     const gridContainer = document.getElementById('mode2-options');
     gridContainer.innerHTML = '';
@@ -564,6 +655,53 @@ function renderMode2() {
         div.setAttribute('data-index', idx);
         div.addEventListener('click', () => handleQuizAnswer(opt, div));
         gridContainer.appendChild(div);
+    });
+}
+
+// Build variant buttons dynamically based on the current time
+// Shows visual labels like "3¼", "3:15" for quarter past, or "9:45", "10-¼", "10-15" for quarter to
+function updateVariantButtons(hour, minute, containerId) {
+    const container = document.getElementById(containerId || 'variant-pills');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const h12 = hour === 12 ? 12 : hour % 12;
+    const nextH = h12 === 12 ? 1 : h12 + 1;
+
+    // Unicode fraction chars
+    const FRAC = { 15: '¼', 30: '½', 45: '¾' };
+
+    let variants = [];
+
+    if (minute === 0) {
+        // Only one way to say :00
+        variants.push({ variant: 'frac', label: `${h12}:00`, active: true });
+    } else if (minute === 15) {
+        variants.push({ variant: 'frac', label: `${h12}¼`, active: true });
+        variants.push({ variant: 'num', label: `${h12}:15` });
+    } else if (minute === 30) {
+        variants.push({ variant: 'frac', label: `${h12}½`, active: true });
+        variants.push({ variant: 'num', label: `${h12}:30` });
+    } else if (minute === 45) {
+        variants.push({ variant: 'num',   label: `${h12}:45` });
+        variants.push({ variant: 'frac',  label: `${nextH}-¼`, active: true });
+        variants.push({ variant: 'minus', label: `${nextH}-15` });
+    } else {
+        // Non-quarter: no variant audio available
+        variants.push({ variant: 'num', label: `${h12}:${String(minute).padStart(2,'0')}`, active: true });
+    }
+
+    variants.forEach(v => {
+        const btn = document.createElement('button');
+        btn.className = 'pill-btn' + (v.active ? ' active' : '');
+        btn.dataset.variant = v.variant;
+        btn.textContent = v.label;
+        btn.addEventListener('click', () => {
+            container.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            playTimeAudio(); // auto-play on variant switch
+        });
+        container.appendChild(btn);
     });
 }
 

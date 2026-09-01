@@ -537,11 +537,10 @@ body {
 /* Clock styling & positioning */
 .clock-display-wrapper {
     position: relative;
-    width: 320px;
-    height: 320px;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 16px;
 }
 
 .clock-container {
@@ -714,8 +713,139 @@ body {
     background-color: var(--bg-card);
     border: 3px solid var(--border-color);
     border-radius: 20px;
-    padding: 20px 40px;
+    padding: 20px 30px;
     box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+/* Audio Panel — sits to the right of the digital time */
+.audio-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.speak-btn {
+    font-size: 32px;
+    width: 56px;
+    height: 56px;
+    border: 3px solid var(--border-color);
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    line-height: 1;
+}
+
+.speak-btn:hover {
+    transform: scale(1.12);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.speak-btn:active {
+    transform: scale(0.92);
+}
+
+.speak-btn.playing {
+    border-color: var(--primary);
+    animation: pulse-glow 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    from { box-shadow: 0 0 5px rgba(66, 133, 244, 0.3); }
+    to   { box-shadow: 0 0 20px rgba(66, 133, 244, 0.7); }
+}
+
+/* Language flag buttons */
+.lang-flags {
+    display: flex;
+    gap: 4px;
+}
+
+.flag-btn {
+    font-size: 20px;
+    width: 36px;
+    height: 30px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.5;
+}
+
+.flag-btn:not(:disabled):hover {
+    transform: scale(1.15);
+    opacity: 1;
+}
+
+.flag-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    opacity: 1;
+}
+
+.flag-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+/* Variant pill buttons (¼  15  -¼) */
+.variant-pills {
+    display: flex;
+    gap: 3px;
+    background: var(--bg-card-header);
+    border-radius: 10px;
+    padding: 3px;
+}
+
+.pill-btn {
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1.2;
+}
+
+.pill-btn:hover {
+    color: var(--text-primary);
+    background: rgba(66, 133, 244, 0.08);
+}
+
+.pill-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
+}
+
+@media (max-width: 500px) {
+    .digital-target-wrapper {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+    .speak-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 26px;
+    }
 }
 
 .digital-clock-led {

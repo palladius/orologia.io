@@ -40,8 +40,14 @@
                 </button>
             </nav>
 
-            <!-- Theme & Sound controls -->
+            <!-- Theme, Sound & Language controls -->
             <div class="header-controls">
+                <div class="lang-flags" id="global-lang-flags">
+                    <button class="flag-btn active" data-lang="french" title="Français">🇫🇷</button>
+                    <button class="flag-btn" data-lang="italian" title="Italiano" disabled>🇮🇹</button>
+                    <button class="flag-btn" data-lang="german" title="Deutsch" disabled>🇩🇪</button>
+                    <button class="flag-btn" data-lang="english" title="English" disabled>🇬🇧</button>
+                </div>
                 <button id="sound-toggle" class="control-btn" title="Toggle Sound">
                     <span id="sound-icon">🔊</span>
                 </button>
@@ -105,6 +111,14 @@
                     <div class="clock-display-wrapper">
                         <!-- Main SVG Clock will be rendered here -->
                         <div id="main-clock-container" class="clock-container"></div>
+                        <div class="audio-panel">
+                            <button class="speak-btn" id="speak-time-btn-mode1" title="Listen to the time 🔊">
+                                🔊
+                            </button>
+                            <div class="variant-pills" id="variant-pills-mode1">
+                                <!-- Dynamically populated by JS -->
+                            </div>
+                        </div>
                     </div>
 
                     <div class="options-container" id="mode1-options">
@@ -119,6 +133,14 @@
                     <div class="digital-target-wrapper">
                         <div class="digital-clock-led glow-orange" id="mode2-target-digital">
                             10:30
+                        </div>
+                        <div class="audio-panel">
+                            <button class="speak-btn" id="speak-time-btn" title="Listen to the time 🔊">
+                                🔊
+                            </button>
+                            <div class="variant-pills" id="variant-pills">
+                                <!-- Dynamically populated by JS based on current time -->
+                            </div>
                         </div>
                     </div>
 
