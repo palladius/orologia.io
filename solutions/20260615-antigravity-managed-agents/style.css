@@ -1550,3 +1550,14 @@ body {
     color: var(--amber);
     text-transform: uppercase;
 }
+
+/* Version Footer */
+.app-footer {
+    text-align: center;
+    padding: 16px 0 8px;
+    font-family: var(--font-primary);
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    letter-spacing: 0.5px;
+}
