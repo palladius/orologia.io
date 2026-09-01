@@ -2,6 +2,18 @@
 
 All notable changes to orologia.io will be documented in this file.
 
+## [1.2.0] - 2026-09-01
+
+### Added
+- 🇩🇪 **German audio** — 104 MP3s with Katja (female), includes "halb zwei", "Viertel vor/nach", "dreiviertel"
+- 🇮🇹 **Italian audio** — 104 MP3s with Elsa (female), includes "e un quarto", "meno un quarto", "e mezza"
+- 🇬🇧 **English audio** — 104 MP3s with Sonia (British female), includes "quarter past/to", "half past"
+- All 4 language flags now active in the header
+
+### Fixed
+- Footer position (was top-right, now bottom-center)
+- Variant pill buttons no longer wrap text
+
 ## [1.1.0] - 2026-09-01
 
 ### Added
