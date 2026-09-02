@@ -193,9 +193,50 @@ function playSound(type) {
 // Multilingual Time Audio Playback
 // Plays a pre-recorded MP3 of the current time in the selected language
 let currentTimeAudio = null; // Track playing audio to avoid overlaps
+let autoPlayTimer = null;    // 5-second auto-play timer
+
+// Start a 5-second timer that auto-plays a random variant if user is idle
+// Only for Mode 1 (AD) and Mode 2 (DA), not Master difficulty
+function startAutoPlayTimer() {
+    cancelAutoPlayTimer();
+
+    // Don't auto-play for Master difficulty (may have non-quarter times) or Mode 3
+    if (state.difficulty === 'hard' || state.gameMode === 3) return;
+    if (!state.currentQuestion) return;
+
+    const minute = state.currentQuestion.correctTime.minute;
+    // Only auto-play for times that have audio files
+    if (minute !== 0 && minute !== 15 && minute !== 30 && minute !== 45) return;
+
+    autoPlayTimer = setTimeout(() => {
+        autoPlayTimer = null;
+        if (!state.currentQuestion || state.currentQuestion.answered) return;
+
+        // Pick a random variant pill and activate it before playing
+        const activeScreen = document.querySelector('.game-screen.active');
+        if (!activeScreen) return;
+        const pills = activeScreen.querySelectorAll('.pill-btn');
+        if (pills.length > 0) {
+            const randomPill = pills[Math.floor(Math.random() * pills.length)];
+            pills.forEach(p => p.classList.remove('active'));
+            randomPill.classList.add('active');
+        }
+
+        console.log('⏰ Auto-play after 5s idle');
+        playTimeAudio();
+    }, 5000);
+}
+
+function cancelAutoPlayTimer() {
+    if (autoPlayTimer) {
+        clearTimeout(autoPlayTimer);
+        autoPlayTimer = null;
+    }
+}
 
 function playTimeAudio() {
     if (!state.currentQuestion) return;
+    cancelAutoPlayTimer();
 
     const q = state.currentQuestion.correctTime;
     const hour12 = q.hour === 12 ? 12 : q.hour % 12;
@@ -527,6 +568,9 @@ function generateQuestion() {
     } else if (state.gameMode === 2) {
         renderMode2();
     }
+
+    // Start 5-second auto-play timer for audio pronunciation
+    startAutoPlayTimer();
 }
 
 // Generate 3 extremely smart distractors to prevent guessing ("A Usta")
@@ -719,6 +763,7 @@ function handleQuizAnswer(selectedOption, element) {
     const q = state.currentQuestion;
     if (q.answered) return; // Prevent double answering
     q.answered = true;
+    cancelAutoPlayTimer();
 
     if (selectedOption.isCorrect) {
         // Correct Answer
