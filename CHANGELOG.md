@@ -2,6 +2,16 @@
 
 All notable changes to orologia.io will be documented in this file.
 
+## [1.3.0] - 2026-09-02
+
+### Added
+- ⏰ **Auto-play audio** after 5 seconds idle — plays a random variant automatically (Mode 1 & 2, Sebi/Ale only)
+
+### Fixed
+- 🐛 Variant pill scoping — now reads from active game screen, not the whole page
+- 🔊 Speaker button works correctly in both Mode 1 and Mode 2
+- 🎯 Variant pill buttons 2x bigger for easier tapping (22px, was 13px)
+
 ## [1.2.0] - 2026-09-01
 
 ### Added
