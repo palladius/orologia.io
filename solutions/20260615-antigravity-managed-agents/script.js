@@ -201,7 +201,11 @@ function playTimeAudio() {
     const hour12 = q.hour === 12 ? 12 : q.hour % 12;
     const minute = q.minute;
     const langBtn = document.querySelector('#global-lang-flags .flag-btn.active');
-    const variantBtn = document.querySelector('.pill-btn.active');
+
+    // Find the active variant pill in the VISIBLE game screen only
+    const activeScreen = document.querySelector('.game-screen.active') || document;
+    const variantBtn = activeScreen.querySelector('.pill-btn.active');
+
     const lang = langBtn ? langBtn.dataset.lang : 'french';
     const variant = variantBtn ? variantBtn.dataset.variant : 'frac';
 
@@ -224,6 +228,7 @@ function playTimeAudio() {
     }
 
     const url = `assets/audio/${lang}/${filename}`;
+    console.log(`🔊 Playing: ${url} (variant=${variant})`);
 
     // Stop any currently playing audio
     if (currentTimeAudio) {
@@ -234,10 +239,12 @@ function playTimeAudio() {
     const audio = new Audio(url);
     currentTimeAudio = audio;
 
-    // Visual feedback on the button
-    const btn = document.getElementById('speak-time-btn');
-    btn.classList.add('playing');
-    btn.textContent = '🔉';
+    // Visual feedback on the speak button (works for both Mode 1 and Mode 2)
+    const btn = activeScreen.querySelector('.speak-btn');
+    if (btn) {
+        btn.classList.add('playing');
+        btn.textContent = '🔉';
+    }
 
     audio.play().catch(err => {
         console.warn('Audio playback failed:', err);
@@ -245,8 +252,10 @@ function playTimeAudio() {
     });
 
     audio.addEventListener('ended', () => {
-        btn.classList.remove('playing');
-        btn.textContent = '🔊';
+        if (btn) {
+            btn.classList.remove('playing');
+            btn.textContent = '🔊';
+        }
         currentTimeAudio = null;
     });
 
