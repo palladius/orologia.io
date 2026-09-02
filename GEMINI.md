@@ -1,5 +1,7 @@
 do NOT update solutions or create solutions unless explciitly asked!
 
+**Always** bump `VERSION`, update `CHANGELOG.md`, and update the version in the footer of `index.html` on every significant change.
+
 ## Deployment to GitHub Pages
 
 The app is deployed to https://palladius.github.io/orologia.io/ via GitHub Actions.
