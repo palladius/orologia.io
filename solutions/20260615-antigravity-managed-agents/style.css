@@ -804,19 +804,19 @@ body {
 /* Variant pill buttons (¼  15  -¼) */
 .variant-pills {
     display: flex;
-    gap: 3px;
+    gap: 4px;
     background: var(--bg-card-header);
-    border-radius: 10px;
-    padding: 3px;
+    border-radius: 14px;
+    padding: 4px;
 }
 
 .pill-btn {
     font-family: var(--font-primary);
-    font-size: 13px;
+    font-size: 22px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     background: transparent;
     color: var(--text-secondary);
     cursor: pointer;
