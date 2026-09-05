@@ -712,43 +712,52 @@ function renderMode2() {
 }
 
 // Build variant buttons dynamically based on the current time
-// Shows visual labels like "3¼", "3:15" for quarter past, or "9:45", "10-¼", "10-15" for quarter to
+// Uses pizza/pie icons instead of text labels to avoid revealing the answer
+const VARIANT_ICONS = {
+    'num':   'assets/icons/numeric.jpg',
+    'frac_quarter': 'assets/icons/quarter.jpg',
+    'frac_half':    'assets/icons/half.jpg',
+    'frac_three_quarter': 'assets/icons/three_quarter.jpg',
+    'minus': 'assets/icons/numeric.jpg',
+};
+
 function updateVariantButtons(hour, minute, containerId) {
     const container = document.getElementById(containerId || 'variant-pills');
     if (!container) return;
     container.innerHTML = '';
 
-    const h12 = hour === 12 ? 12 : hour % 12;
-    const nextH = h12 === 12 ? 1 : h12 + 1;
-
-    // Unicode fraction chars
-    const FRAC = { 15: '¼', 30: '½', 45: '¾' };
-
     let variants = [];
 
     if (minute === 0) {
-        // Only one way to say :00
-        variants.push({ variant: 'frac', label: `${h12}:00`, active: true });
+        // Only one way to say :00 — no pills needed
+        return;
     } else if (minute === 15) {
-        variants.push({ variant: 'frac', label: `${h12}¼`, active: true });
-        variants.push({ variant: 'num', label: `${h12}:15` });
+        variants.push({ variant: 'frac', icon: 'frac_quarter', title: '¼ fraction', active: true });
+        variants.push({ variant: 'num',  icon: 'num', title: 'numeric' });
     } else if (minute === 30) {
-        variants.push({ variant: 'frac', label: `${h12}½`, active: true });
-        variants.push({ variant: 'num', label: `${h12}:30` });
+        variants.push({ variant: 'frac', icon: 'frac_half', title: '½ fraction', active: true });
+        variants.push({ variant: 'num',  icon: 'num', title: 'numeric' });
     } else if (minute === 45) {
-        variants.push({ variant: 'num',   label: `${h12}:45` });
-        variants.push({ variant: 'frac',  label: `${nextH}-¼`, active: true });
-        variants.push({ variant: 'minus', label: `${nextH}-15` });
+        variants.push({ variant: 'num',   icon: 'num', title: 'numeric' });
+        variants.push({ variant: 'frac',  icon: 'frac_three_quarter', title: '¾ fraction', active: true });
+        variants.push({ variant: 'minus', icon: 'minus', title: 'minus' });
     } else {
         // Non-quarter: no variant audio available
-        variants.push({ variant: 'num', label: `${h12}:${String(minute).padStart(2,'0')}`, active: true });
+        return;
     }
 
     variants.forEach(v => {
         const btn = document.createElement('button');
         btn.className = 'pill-btn' + (v.active ? ' active' : '');
         btn.dataset.variant = v.variant;
-        btn.textContent = v.label;
+        btn.title = v.title;
+
+        const img = document.createElement('img');
+        img.src = VARIANT_ICONS[v.icon];
+        img.alt = v.title;
+        img.className = 'pill-icon';
+        btn.appendChild(img);
+
         btn.addEventListener('click', () => {
             container.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');

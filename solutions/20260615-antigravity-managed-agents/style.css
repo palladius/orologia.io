@@ -814,7 +814,7 @@ body {
     font-family: var(--font-primary);
     font-size: 22px;
     font-weight: 700;
-    padding: 8px 16px;
+    padding: 6px;
     border: none;
     border-radius: 12px;
     background: transparent;
@@ -823,6 +823,16 @@ body {
     transition: all 0.15s ease;
     line-height: 1.2;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pill-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
 .pill-btn:hover {

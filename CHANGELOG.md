@@ -2,6 +2,16 @@
 
 All notable changes to orologia.io will be documented in this file.
 
+## [1.4.0] - 2026-09-05
+
+### Changed
+- 🍕 **Variant buttons now use pizza/pie icons** instead of text labels — no longer reveals the answer!
+  - 🟦 Blue ¼ pie = fraction (quarter)
+  - 🟨 Yellow ½ pie = fraction (half)
+  - 🟥 Red ¾ pie = fraction (three-quarter)
+  - 🟩 Green "123" = numeric way of saying the time
+- No pill buttons shown for :00 (only one way to say it)
+
 ## [1.3.0] - 2026-09-02
 
 ### Added
